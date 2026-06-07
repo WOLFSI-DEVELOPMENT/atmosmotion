@@ -37,11 +37,42 @@ function getOpenRouterClient() {
   });
 }
 
-const app = express();
+export const app = express();
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 const PORT = 3000;
+let dbInitPromise: Promise<void> | null = null;
+
+export function ensureDatabase() {
+  if (!dbInitPromise) {
+    dbInitPromise = (async () => {
+      if (!sql) return;
+      try {
+        await sql`CREATE TABLE IF NOT EXISTS invite_codes (id SERIAL PRIMARY KEY, code VARCHAR(255) UNIQUE NOT NULL, is_used BOOLEAN DEFAULT false, used_by_email VARCHAR(255), created_by_email VARCHAR(255))`;
+        try {
+          await sql`ALTER TABLE invite_codes ADD COLUMN IF NOT EXISTS created_by_email VARCHAR(255)`;
+        } catch(e) {}
+        await sql`CREATE TABLE IF NOT EXISTS users (id SERIAL PRIMARY KEY, name VARCHAR(255), email VARCHAR(255) UNIQUE NOT NULL, pin VARCHAR(255), role VARCHAR(255), goal VARCHAR(255), source VARCHAR(255))`;
+        await sql`CREATE TABLE IF NOT EXISTS tools (id VARCHAR(255) PRIMARY KEY, code TEXT, updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)`;
+        await sql`CREATE TABLE IF NOT EXISTS user_data (email VARCHAR(255) PRIMARY KEY, data JSONB, updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)`;
+        const codes = await sql`SELECT count(*) FROM invite_codes`;
+        if (parseInt(codes[0].count, 10) === 0) {
+          await sql`INSERT INTO invite_codes (code) VALUES ('EARLYACCESS')`;
+          await sql`INSERT INTO invite_codes (code) VALUES ('BETA123')`;
+        }
+      } catch (e) {
+        console.error("DB init failed", e);
+      }
+    })();
+  }
+  return dbInitPromise;
+}
+
+app.use('/api', async (_req, _res, next) => {
+  await ensureDatabase();
+  next();
+});
 
 const systemInstruction = `You are Atmos Motion Agent, an expert AI motion director and senior software engineer. Building Apple-quality Remotion graphics.
 
@@ -812,25 +843,10 @@ app.post('/api/generate-html', async (req, res) => {
    }
 });
 
-async function startServer() {
-  if (sql) {
-     try {
-       await sql`CREATE TABLE IF NOT EXISTS invite_codes (id SERIAL PRIMARY KEY, code VARCHAR(255) UNIQUE NOT NULL, is_used BOOLEAN DEFAULT false, used_by_email VARCHAR(255), created_by_email VARCHAR(255))`;
-       try {
-         await sql`ALTER TABLE invite_codes ADD COLUMN IF NOT EXISTS created_by_email VARCHAR(255)`;
-       } catch(e) {}
-       await sql`CREATE TABLE IF NOT EXISTS users (id SERIAL PRIMARY KEY, name VARCHAR(255), email VARCHAR(255) UNIQUE NOT NULL, pin VARCHAR(255), role VARCHAR(255), goal VARCHAR(255), source VARCHAR(255))`;
-       await sql`CREATE TABLE IF NOT EXISTS tools (id VARCHAR(255) PRIMARY KEY, code TEXT, updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)`;
-       await sql`CREATE TABLE IF NOT EXISTS user_data (email VARCHAR(255) PRIMARY KEY, data JSONB, updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)`;
-       const codes = await sql`SELECT count(*) FROM invite_codes`;
-       if (parseInt(codes[0].count, 10) === 0) {
-         await sql`INSERT INTO invite_codes (code) VALUES ('EARLYACCESS')`;
-         await sql`INSERT INTO invite_codes (code) VALUES ('BETA123')`;
-       }
-     } catch (e) {
-       console.error("DB init failed", e);
-     }
-  }
+export async function prepareServer(options: { serveClient?: boolean } = {}) {
+  await ensureDatabase();
+
+  if (!options.serveClient) return;
 
   if (process.env.NODE_ENV !== 'production') {
     const vite = await createViteServer({
@@ -845,10 +861,15 @@ async function startServer() {
       res.sendFile(path.join(distPath, 'index.html'));
     });
   }
+}
 
+async function startServer() {
+  await prepareServer({ serveClient: true });
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server running on http://localhost:${PORT}`);
   });
 }
 
-startServer();
+if (process.env.VERCEL !== '1') {
+  startServer();
+}
