@@ -1,0 +1,6 @@
+{
+  "name": "Motion Designer",
+  "description": "An AI-powered Remotion video graphic generator.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
