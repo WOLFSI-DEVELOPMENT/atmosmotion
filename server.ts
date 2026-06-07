@@ -875,6 +875,6 @@ async function startServer() {
   });
 }
 
-if (process.env.VERCEL !== '1') {
+if (process.env.ATMOS_STANDALONE_SERVER === '1') {
   startServer();
 }
