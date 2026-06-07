@@ -1,6 +1,4 @@
 import express from 'express';
-import path from 'path';
-import { createServer as createViteServer } from 'vite';
 import { GoogleGenAI, Type } from '@google/genai';
 import { OpenRouter } from '@openrouter/sdk';
 import dotenv from 'dotenv';
@@ -37,6 +35,7 @@ function getOpenRouterClient() {
 }
 
 export const app = express();
+export default app;
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
@@ -853,12 +852,14 @@ export async function prepareServer(options: { serveClient?: boolean } = {}) {
   if (!options.serveClient) return;
 
   if (process.env.NODE_ENV !== 'production') {
+    const { createServer: createViteServer } = await import('vite');
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: 'spa',
     });
     app.use(vite.middlewares);
   } else {
+    const path = await import('path');
     const distPath = path.join(process.cwd(), 'dist');
     app.use(express.static(distPath));
     app.get('*', (req, res) => {
