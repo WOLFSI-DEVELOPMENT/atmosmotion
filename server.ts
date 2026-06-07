@@ -43,6 +43,9 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 const PORT = 3000;
 let dbInitPromise: Promise<void> | null = null;
+const databaseUnavailableError = {
+  error: 'Database is not configured. Set DATABASE_URL in Vercel environment variables.',
+};
 
 export function ensureDatabase() {
   if (!dbInitPromise) {
@@ -155,7 +158,7 @@ app.post('/api/check-code', async (req, res) => {
     const { code } = req.body;
     if (!sql) {
       if (code === 'DEMO') return res.json({ valid: true });
-      return res.status(500).json({ error: 'Database not connected and not DEMO.' });
+      return res.status(503).json(databaseUnavailableError);
     }
     const result = await sql`SELECT * FROM invite_codes WHERE code = ${code}`;
     if (result.length === 0) return res.json({ valid: false, message: 'Invalid code' });
@@ -171,7 +174,7 @@ app.post('/api/onboard', async (req, res) => {
     const { code, name, email, pin, role, goal, source } = req.body;
     if (!sql) {
       if (code === 'DEMO') return res.json({ success: true });
-      return res.status(500).json({ error: 'Database not connected' });
+      return res.status(503).json(databaseUnavailableError);
     }
     const codeResult = await sql`SELECT * FROM invite_codes WHERE code = ${code}`;
     if (codeResult.length === 0 || codeResult[0].is_used) {
@@ -195,7 +198,7 @@ app.post('/api/login', async (req, res) => {
     const { email, pin } = req.body;
     if (!sql) {
       if (email === 'demo@example.com' && pin === '123456') return res.json({ success: true });
-      return res.status(500).json({ error: 'Database not connected' });
+      return res.status(503).json(databaseUnavailableError);
     }
     const result = await Promise.race([
        sql`SELECT * FROM users WHERE LOWER(email) = LOWER(${email}) AND pin = ${pin}`,
@@ -217,7 +220,7 @@ app.post('/api/generate-invite', async (req, res) => {
     const { email } = req.body;
     if (!sql) {
       if (email === 'demo@example.com') return res.json({ code: 'DEMO-1234', remaining: 9 });
-      return res.status(500).json({ error: 'Database not connected' });
+      return res.status(503).json(databaseUnavailableError);
     }
     
     // Check how many they've created
@@ -248,7 +251,7 @@ app.post('/api/get-invites', async (req, res) => {
     const { email } = req.body;
     if (!sql) {
       if (email === 'demo@example.com') return res.json({ remaining: 10 });
-      return res.status(500).json({ error: 'Database not connected' });
+      return res.status(503).json(databaseUnavailableError);
     }
     const userCodes = await sql`SELECT count(*) FROM invite_codes WHERE created_by_email = ${email}`;
     const generatedCount = parseInt(userCodes[0].count, 10);
