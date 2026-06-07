@@ -1,6 +1,5 @@
 import express from 'express';
 import path from 'path';
-import fs from 'fs';
 import { createServer as createViteServer } from 'vite';
 import { GoogleGenAI, Type } from '@google/genai';
 import { OpenRouter } from '@openrouter/sdk';
@@ -59,6 +58,7 @@ export function ensureDatabase() {
         await sql`CREATE TABLE IF NOT EXISTS users (id SERIAL PRIMARY KEY, name VARCHAR(255), email VARCHAR(255) UNIQUE NOT NULL, pin VARCHAR(255), role VARCHAR(255), goal VARCHAR(255), source VARCHAR(255))`;
         await sql`CREATE TABLE IF NOT EXISTS tools (id VARCHAR(255) PRIMARY KEY, code TEXT, updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)`;
         await sql`CREATE TABLE IF NOT EXISTS user_data (email VARCHAR(255) PRIMARY KEY, data JSONB, updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)`;
+        await sql`CREATE TABLE IF NOT EXISTS memories (id SERIAL PRIMARY KEY, prompt TEXT NOT NULL, code TEXT NOT NULL, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)`;
         const codes = await sql`SELECT count(*) FROM invite_codes`;
         if (parseInt(codes[0].count, 10) === 0) {
           await sql`INSERT INTO invite_codes (code) VALUES ('EARLYACCESS')`;
@@ -261,22 +261,23 @@ app.post('/api/get-invites', async (req, res) => {
   }
 });
 
-app.post('/api/teach', (req, res) => {
+app.post('/api/teach', async (req, res) => {
   try {
     const { prompt, code } = req.body;
     if (!prompt || !code) return res.status(400).json({ error: 'Missing prompt or code' });
-    
-    let memory = [];
-    if (fs.existsSync('memory.json')) {
-      memory = JSON.parse(fs.readFileSync('memory.json', 'utf8'));
+
+    if (!sql) {
+      return res.status(503).json(databaseUnavailableError);
     }
-    
-    memory.push({ prompt, code, timestamp: new Date().toISOString() });
-    
-    // Keep only last 10 successful memories to avoid blowing up context window
-    if (memory.length > 10) memory = memory.slice(-10);
-    
-    fs.writeFileSync('memory.json', JSON.stringify(memory, null, 2));
+
+    await sql`INSERT INTO memories (prompt, code) VALUES (${prompt}, ${code})`;
+    await sql`
+      DELETE FROM memories
+      WHERE id NOT IN (
+        SELECT id FROM memories ORDER BY created_at DESC LIMIT 10
+      )
+    `;
+
     res.json({ success: true });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
@@ -472,8 +473,8 @@ app.post('/api/chat', async (req, res) => {
     
     // Inject Memory Context
     try {
-      if (fs.existsSync('memory.json')) {
-        const memory = JSON.parse(fs.readFileSync('memory.json', 'utf8'));
+      if (sql) {
+        const memory = await sql`SELECT prompt, code FROM memories ORDER BY created_at DESC LIMIT 10`;
         if (memory.length > 0) {
            let memCtx = "\n\n[SELF-LEARNING MEMORY / PAST SUCCESSFUL EXAMPLES]\nThe user has explicitly taught you the following successful snippets in the past. Use them as references for style, structure, or when they ask for something similar:\n";
            memory.forEach((m: any, i: number) => {
