@@ -83,7 +83,7 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
   };
 
   return (
-    <div className="w-[240px] h-screen bg-[#f5f5f5] flex-shrink-0 flex flex-col px-4 py-6 relative">
+    <div className="w-[240px] h-screen bg-white flex-shrink-0 flex flex-col px-4 py-6 relative">
       {/* App Title & Icon */}
       <div className="flex items-center gap-3 px-2 mb-8">
         <img src="https://res.cloudinary.com/dwthgcx5j/image/upload/v1780066101/ChatGPT_Image_May_29_2026_07_42_50_AM_1_tptgxp.png" alt="Atmos design" className="w-[42px] h-[42px] object-contain flex-shrink-0" />
@@ -130,7 +130,7 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
           <span className="font-medium text-sm">Marketplace</span>
         </button>
 
-        <div className="w-full h-px bg-gray-200/50 my-2" />
+        <div className="my-2" />
 
         {/* Tools Tab */}
         <button
@@ -147,7 +147,7 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
       </div>
 
       {/* Bottom Actions */}
-      <div className="flex flex-col gap-2 pt-4 border-t border-gray-200/50 mt-auto">
+      <div className="flex flex-col gap-2 pt-4 mt-auto">
         <button
           onClick={openInviteModal}
           className="w-full rounded-full flex items-center px-4 py-2 transition-colors bg-transparent text-gray-600 hover:bg-[#e5e5e5] hover:text-gray-900 cursor-pointer"
