@@ -35,6 +35,20 @@ export default function EnterCodePage({ onNavigate }: EnterCodePageProps) {
     'TikTok', 'Friend / Colleague', 'Search Engine', 'Other'
   ];
 
+  const inputClassName = "w-full h-14 rounded-full bg-[#1a1a1d] px-6 text-white placeholder:text-white/35 focus:outline-none focus:ring-0";
+  const primaryButtonClassName = "group relative w-full h-16 rounded-full bg-white text-black font-semibold disabled:opacity-50 disabled:cursor-not-allowed transition-all border-2 border-white shadow-[0_0_0_3px_rgba(255,255,255,0.45)] hover:scale-[1.01]";
+  const optionButtonClassName = (active: boolean) =>
+    `h-14 rounded-full px-4 font-medium transition-all border-0 ${active ? 'bg-white text-black' : 'bg-[#1a1a1d] text-white/72 hover:bg-[#232327] hover:text-white'}`;
+  const PrimaryButtonContent = ({ label }: { label: string }) => (
+    <span className="flex items-center justify-center gap-4">
+      <span>{label}</span>
+      <svg className="h-5 w-5 transition-transform group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M5 12h14" />
+        <path d="m13 6 6 6-6 6" />
+      </svg>
+    </span>
+  );
+
   const handleCheckCode = async () => {
     if (!code.trim()) return;
     setIsLoading(true);
@@ -99,7 +113,7 @@ export default function EnterCodePage({ onNavigate }: EnterCodePageProps) {
   }, [step]);
 
   return (
-    <div className="min-h-screen w-full bg-[#fdfdfd] flex flex-col items-center justify-center font-sans text-gray-900 relative overflow-hidden">
+    <div className="min-h-screen w-full bg-black flex flex-col items-center justify-center font-sans text-white relative overflow-hidden">
       <AnimatePresence mode="wait">
         {step === -1 && (
           <motion.div 
@@ -109,7 +123,7 @@ export default function EnterCodePage({ onNavigate }: EnterCodePageProps) {
             exit={{ opacity: 0, y: -20 }}
             className="flex flex-col items-center z-10 w-full max-w-md px-6"
           >
-            <img src="https://res.cloudinary.com/dwthgcx5j/image/upload/v1780066101/ChatGPT_Image_May_29_2026_07_42_50_AM_1_tptgxp.png" alt="Atmos design" className="w-[48px] h-[48px] object-contain flex-shrink-0 mb-8" />
+            <img src="https://res.cloudinary.com/dwthgcx5j/image/upload/v1780066101/ChatGPT_Image_May_29_2026_07_42_50_AM_1_tptgxp.png" alt="Atmos design" className="w-[48px] h-[48px] object-contain flex-shrink-0 mb-8 brightness-0 invert" />
             
             <h1 className="text-3xl font-semibold mb-8">Enter invite code</h1>
             
@@ -120,21 +134,21 @@ export default function EnterCodePage({ onNavigate }: EnterCodePageProps) {
                onChange={(e) => setCode(e.target.value.toUpperCase())}
                onKeyDown={(e) => e.key === 'Enter' && handleCheckCode()}
                placeholder="ABCDEF"
-               className="w-full h-14 text-center text-xl font-medium rounded-2xl border border-gray-300 bg-transparent focus:outline-none focus:border-black focus:ring-1 focus:ring-black uppercase transition-colors mb-4"
+               className={`${inputClassName} text-center text-xl font-medium uppercase mb-4`}
             />
             {error && <p className="text-red-500 mb-4 text-sm font-medium">{error}</p>}
 
             <button 
               onClick={handleCheckCode}
               disabled={isLoading || !code.trim()}
-              className="w-full h-12 px-6 bg-black text-white rounded-2xl font-medium hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all mb-6"
+              className={`${primaryButtonClassName} mb-6`}
             >
-              {isLoading ? 'Checking...' : 'Continue'}
+              <PrimaryButtonContent label={isLoading ? 'Checking...' : 'Continue'} />
             </button>
 
             <button 
               onClick={() => onNavigate('waitlist')}
-              className="text-sm text-gray-500 hover:text-black transition-colors"
+              className="text-sm text-white/45 hover:text-white transition-colors"
             >
               Back to waitlist
             </button>
@@ -144,17 +158,17 @@ export default function EnterCodePage({ onNavigate }: EnterCodePageProps) {
         {step === 0 && (
           <motion.div key="step-0" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="w-full max-w-md px-6">
             <h1 className="text-4xl font-medium mb-4 text-center tracking-tight">Welcome to Atmos.</h1>
-            <p className="text-gray-500 text-lg mb-8 text-center">What should we call you?</p>
+            <p className="text-white/50 text-lg mb-8 text-center">What should we call you?</p>
             <input
               ref={inputRef}
               type="text"
               value={formData.name}
               onChange={e => setFormData({...formData, name: e.target.value})}
               onKeyDown={e => e.key === 'Enter' && formData.name && handleNext()}
-              className="w-full h-14 text-lg border-b-2 border-gray-200 focus:border-black focus:outline-none bg-transparent mb-8"
+              className={`${inputClassName} text-lg mb-8`}
               placeholder="Your name"
             />
-            <button onClick={handleNext} disabled={!formData.name} className="w-full h-12 bg-black text-white rounded-2xl font-medium disabled:opacity-50">Next</button>
+            <button onClick={handleNext} disabled={!formData.name} className={primaryButtonClassName}><PrimaryButtonContent label="Next" /></button>
           </motion.div>
         )}
 
@@ -167,17 +181,17 @@ export default function EnterCodePage({ onNavigate }: EnterCodePageProps) {
               value={formData.email}
               onChange={e => setFormData({...formData, email: e.target.value})}
               onKeyDown={e => e.key === 'Enter' && formData.email && handleNext()}
-              className="w-full h-14 text-lg border-b-2 border-gray-200 focus:border-black focus:outline-none bg-transparent mb-8"
+              className={`${inputClassName} text-lg mb-8`}
               placeholder="name@company.com"
             />
-            <button onClick={handleNext} disabled={!formData.email} className="w-full h-12 bg-black text-white rounded-2xl font-medium disabled:opacity-50">Next</button>
+            <button onClick={handleNext} disabled={!formData.email} className={primaryButtonClassName}><PrimaryButtonContent label="Next" /></button>
           </motion.div>
         )}
 
         {step === 2 && (
           <motion.div key="step-2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="w-full max-w-md px-6">
             <h1 className="text-4xl font-medium mb-4 text-center tracking-tight">Secure your account</h1>
-            <p className="text-gray-500 text-lg mb-8 text-center">Create a 6-digit PIN</p>
+            <p className="text-white/50 text-lg mb-8 text-center">Create a 6-digit PIN</p>
             <input
               ref={inputRef}
               type="password"
@@ -185,9 +199,9 @@ export default function EnterCodePage({ onNavigate }: EnterCodePageProps) {
               value={formData.pin}
               onChange={e => setFormData({...formData, pin: e.target.value.replace(/\D/g, '')})}
               onKeyDown={e => e.key === 'Enter' && formData.pin.length === 6 && handleNext()}
-              className="w-full h-16 text-center text-3xl tracking-[1em] border-b-2 border-gray-200 focus:border-black focus:outline-none bg-transparent mb-8"
+              className={`${inputClassName} h-16 text-center text-3xl tracking-[1em] mb-8`}
             />
-            <button onClick={handleNext} disabled={formData.pin.length !== 6} className="w-full h-12 bg-black text-white rounded-2xl font-medium disabled:opacity-50">Next</button>
+            <button onClick={handleNext} disabled={formData.pin.length !== 6} className={primaryButtonClassName}><PrimaryButtonContent label="Next" /></button>
           </motion.div>
         )}
 
@@ -199,7 +213,7 @@ export default function EnterCodePage({ onNavigate }: EnterCodePageProps) {
                 <button
                   key={r}
                   onClick={() => { setFormData({...formData, role: r}); setTimeout(handleNext, 150); }}
-                  className={`h-14 font-medium rounded-2xl border transition-all ${formData.role === r ? 'border-black bg-black text-white shadow-md' : 'border-gray-200 bg-white hover:border-gray-400'}`}
+                  className={optionButtonClassName(formData.role === r)}
                 >
                   {r}
                 </button>
@@ -216,7 +230,7 @@ export default function EnterCodePage({ onNavigate }: EnterCodePageProps) {
                 <button
                   key={g}
                   onClick={() => { setFormData({...formData, goal: g}); setTimeout(handleNext, 150); }}
-                  className={`h-14 font-medium rounded-2xl border transition-all ${formData.goal === g ? 'border-black bg-black text-white shadow-md' : 'border-gray-200 bg-white hover:border-gray-400'}`}
+                  className={optionButtonClassName(formData.goal === g)}
                 >
                   {g}
                 </button>
@@ -233,7 +247,7 @@ export default function EnterCodePage({ onNavigate }: EnterCodePageProps) {
                 <button
                   key={s}
                   onClick={() => { setFormData({...formData, source: s}); setTimeout(handleNext, 150); }}
-                  className={`h-14 text-sm font-medium rounded-xl border transition-all ${formData.source === s ? 'border-black bg-black text-white shadow-md' : 'border-gray-200 bg-white hover:border-gray-400'}`}
+                  className={`${optionButtonClassName(formData.source === s)} text-sm`}
                 >
                   {s}
                 </button>
@@ -244,23 +258,23 @@ export default function EnterCodePage({ onNavigate }: EnterCodePageProps) {
 
         {step === 6 && (
           <motion.div key="step-6" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="w-full max-w-md px-6 text-center">
-            <div className="w-16 h-16 bg-black rounded-full mx-auto mb-6 flex items-center justify-center text-white">
+            <div className="w-16 h-16 bg-white rounded-full mx-auto mb-6 flex items-center justify-center text-black">
                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
             </div>
             <h1 className="text-4xl font-medium mb-4 text-center tracking-tight">You're all set!</h1>
-            <p className="text-gray-500 text-lg mb-8">Let's start creating.</p>
-            <button onClick={handleNext} disabled={isLoading} className="w-full h-12 bg-black text-white rounded-2xl font-medium disabled:opacity-50">
-               {isLoading ? 'Finishing setup...' : 'Continue'}
+            <p className="text-white/50 text-lg mb-8">Let's start creating.</p>
+            <button onClick={handleNext} disabled={isLoading} className={primaryButtonClassName}>
+               <PrimaryButtonContent label={isLoading ? 'Finishing setup...' : 'Continue'} />
             </button>
           </motion.div>
         )}
 
         {step === 7 && (
           <motion.div key="step-7" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-md px-6 text-center">
-            <img src="https://res.cloudinary.com/dwthgcx5j/image/upload/v1780066101/ChatGPT_Image_May_29_2026_07_42_50_AM_1_tptgxp.png" alt="Atmos design" className="w-[80px] h-[80px] object-contain flex-shrink-0 mb-6 mx-auto" />
+            <img src="https://res.cloudinary.com/dwthgcx5j/image/upload/v1780066101/ChatGPT_Image_May_29_2026_07_42_50_AM_1_tptgxp.png" alt="Atmos design" className="w-[80px] h-[80px] object-contain flex-shrink-0 mb-6 mx-auto brightness-0 invert" />
             <h1 className="text-5xl font-serif mb-8 text-center tracking-tight">Have fun, {formData.name.split(' ')[0]}!</h1>
-            <button onClick={() => onNavigate('app')} className="w-full h-14 bg-black text-white rounded-2xl font-medium text-lg hover:bg-gray-800 transition-colors shadow-lg">
-               Enter Atmos
+            <button onClick={() => onNavigate('app')} className={primaryButtonClassName}>
+               <PrimaryButtonContent label="Enter Atmos" />
             </button>
           </motion.div>
         )}

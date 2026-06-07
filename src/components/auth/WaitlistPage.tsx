@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { motion, useScroll, useMotionValueEvent, useInView } from 'motion/react';
-import { Quote } from 'lucide-react';
+import { Clapperboard, Layers3, Quote, Sparkles } from 'lucide-react';
 
 const TypewriterText = ({ text1, text2 }: { text1: string, text2?: string }) => {
   const [displayText1, setDisplayText1] = useState('');
@@ -66,6 +66,39 @@ const ROW2_VIDEOS = [
   'D4XTefP3Lsc', 'UAmKyyZ-b9E', 'LpGpwhORWr0'
 ];
 
+const SHOWCASE_IMAGES = [
+  {
+    src: 'https://res.cloudinary.com/dwthgcx5j/image/upload/v1780711400/make_text_allingned_centured_in_202606051901_uugpuc.jpg',
+    alt: 'Atmos prompt to visual composition workspace',
+  },
+  {
+    src: 'https://res.cloudinary.com/dwthgcx5j/image/upload/v1780716829/Built_for_anyone._Designed_for_202606052031_njd4bf.jpg',
+    alt: 'Atmos creative workflow for different makers',
+  },
+  {
+    src: 'https://res.cloudinary.com/dwthgcx5j/image/upload/v1780716781/Hills_with_blue_tint_202606052031_q7a8st.jpg',
+    alt: 'Atmos cinematic visual creation features',
+  },
+];
+
+const SHOWCASE_FEATURES = [
+  {
+    icon: Sparkles,
+    title: 'Prompt cinematic scenes',
+    description: 'Describe the visual, mood, camera move, and pacing.',
+  },
+  {
+    icon: Layers3,
+    title: 'Shape every layer',
+    description: 'Refine layouts, type, images, and transitions in one workspace.',
+  },
+  {
+    icon: Clapperboard,
+    title: 'Export motion faster',
+    description: 'Turn ideas into social clips, promos, and brand visuals.',
+  },
+];
+
 interface WaitlistPageProps {
   onNavigate: (page: 'waitlist' | 'enter-code' | 'login' | 'app' | 'privacy' | 'terms') => void;
 }
@@ -80,14 +113,11 @@ export default function WaitlistPage({ onNavigate }: WaitlistPageProps) {
   });
 
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
-    // 7 sections total -> max scroll is 6 * 100vh
-    if (latest < 0.08) setActiveSection(0);
-    else if (latest < 0.25) setActiveSection(1);
-    else if (latest < 0.41) setActiveSection(2);
-    else if (latest < 0.58) setActiveSection(3);
-    else if (latest < 0.75) setActiveSection(4);
-    else if (latest < 0.91) setActiveSection(5);
-    else setActiveSection(6);
+    if (latest < 0.13) setActiveSection(0);
+    else if (latest < 0.38) setActiveSection(1);
+    else if (latest < 0.63) setActiveSection(2);
+    else if (latest < 0.88) setActiveSection(3);
+    else setActiveSection(4);
   });
 
   const scrollToSection = (index: number) => {
@@ -150,23 +180,6 @@ export default function WaitlistPage({ onNavigate }: WaitlistPageProps) {
           </svg>
         </button>
         <button onClick={() => scrollToSection(4)} className={`transition-opacity duration-300 ${activeSection === 4 ? 'opacity-100' : 'opacity-20 hover:opacity-50'}`}>
-          <svg className="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/>
-            <line x1="7" y1="2" x2="7" y2="22"/>
-            <line x1="17" y1="2" x2="17" y2="22"/>
-            <line x1="2" y1="12" x2="22" y2="12"/>
-            <line x1="2" y1="7" x2="7" y2="7"/>
-            <line x1="2" y1="17" x2="7" y2="17"/>
-            <line x1="17" y1="17" x2="22" y2="17"/>
-            <line x1="17" y1="7" x2="22" y2="7"/>
-          </svg>
-        </button>
-        <button onClick={() => scrollToSection(5)} className={`transition-opacity duration-300 ${activeSection === 5 ? 'opacity-100' : 'opacity-20 hover:opacity-50'}`}>
-          <svg className="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-          </svg>
-        </button>
-        <button onClick={() => scrollToSection(6)} className={`transition-opacity duration-300 ${activeSection === 6 ? 'opacity-100' : 'opacity-20 hover:opacity-50'}`}>
           <svg className="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="12" cy="12" r="10"/>
             <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
@@ -299,65 +312,67 @@ export default function WaitlistPage({ onNavigate }: WaitlistPageProps) {
         </div>
       </section>
 
-      {/* Carousel Image 1 */}
-      <section className="snap-start snap-always w-full h-[100svh] flex flex-col items-center justify-center bg-black shrink-0 px-6 md:px-24 object-cover relative pt-12">
-        <TypewriterText text1="Design " text2="faster" />
-        <motion.div 
-          className="w-full max-w-7xl aspect-video superellipse-box overflow-hidden bg-[#18181b]"
-          whileInView={{ scale: [0.95, 1], opacity: [0, 1] }}
+      {/* Product Showcase */}
+      <section className="snap-start snap-always w-full h-[100svh] flex items-center justify-center bg-black shrink-0 px-6 md:px-20 py-8 relative overflow-hidden">
+        <motion.div
+          className="relative grid w-full max-w-7xl gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center"
+          whileInView={{ scale: [0.97, 1], opacity: [0, 1] }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          viewport={{ once: false, amount: 0.4 }}
+          viewport={{ once: false, amount: 0.35 }}
         >
-          <img 
-            src="https://res.cloudinary.com/dwthgcx5j/image/upload/v1780711400/make_text_allingned_centured_in_202606051901_uugpuc.jpg" 
-            alt="Design at the speed of thought" 
-            className="w-full h-full object-cover"
-          />
-        </motion.div>
-      </section>
+          <div className="flex flex-col justify-center">
+            <div className="mb-7">
+              <p className="mb-3 text-xs font-semibold uppercase tracking-[0.24em] text-blue-300">Atmos Motion</p>
+              <h2 className="max-w-lg text-3xl font-medium leading-tight text-white md:text-4xl">
+                Create motion systems from a single prompt.
+              </h2>
+              <p className="mt-4 max-w-md text-sm leading-6 text-white/62">
+                Turn ideas into scroll-ready videos, product scenes, and animated brand assets with an AI workspace built for visual direction.
+              </p>
+            </div>
 
-      {/* Carousel Image 2 */}
-      <section className="snap-start snap-always w-full h-[100svh] flex flex-col items-center justify-center bg-black shrink-0 px-6 md:px-24 relative pt-12">
-        <TypewriterText text1="Who is " text2="this for?" />
-        <motion.div 
-          className="w-full max-w-7xl aspect-video superellipse-box overflow-hidden bg-[#18181b]"
-          whileInView={{ scale: [0.95, 1], opacity: [0, 1] }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          viewport={{ once: false, amount: 0.4 }}
-        >
-          <img 
-            src="https://res.cloudinary.com/dwthgcx5j/image/upload/v1780716829/Built_for_anyone._Designed_for_202606052031_njd4bf.jpg" 
-            alt="Built for anyone. Designed for everything." 
-            className="w-full h-full object-cover"
-          />
-        </motion.div>
-      </section>
+            <div className="space-y-5">
+              {SHOWCASE_FEATURES.map((feature) => {
+                const Icon = feature.icon;
+                return (
+                  <div key={feature.title} className="flex gap-3 border-t border-white/12 pt-4">
+                    <div className="mt-1 text-blue-300">
+                      <Icon className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-medium text-white">{feature.title}</h3>
+                      <p className="mt-1 max-w-sm text-sm leading-5 text-white/58">{feature.description}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
 
-      {/* Carousel Image 3 */}
-      <section className="snap-start snap-always w-full h-[100svh] flex flex-col items-center justify-center bg-black shrink-0 px-6 md:px-24 relative pt-12">
-        <TypewriterText text1="Why choose " text2="Atmos?" />
-        <motion.div 
-          className="w-full max-w-7xl aspect-video superellipse-box overflow-hidden bg-[#18181b]"
-          whileInView={{ scale: [0.95, 1], opacity: [0, 1] }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          viewport={{ once: false, amount: 0.4 }}
-        >
-           <img 
-            src="https://res.cloudinary.com/dwthgcx5j/image/upload/v1780716781/Hills_with_blue_tint_202606052031_q7a8st.jpg" 
-            alt="Powerful features for stunning visual creation" 
-            className="w-full h-full object-cover"
-          />
+          <div className="relative h-[56svh] min-h-[360px] overflow-hidden superellipse-box bg-[#111318]">
+            <div className="flex h-full snap-x snap-mandatory overflow-x-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              {SHOWCASE_IMAGES.map((image) => (
+                <div key={image.src} className="relative h-full min-w-full snap-center">
+                  <img
+                    src={image.src}
+                    alt={image.alt}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
         </motion.div>
       </section>
 
       {/* Video Carousel Section */}
       <section className="snap-start snap-always w-full h-[100svh] flex flex-col items-center justify-center bg-black shrink-0 relative py-16">
-        <div className="w-full text-center px-4 mb-4">
+        <div className="w-full text-center px-4 mb-3">
           <TypewriterText text1="Create the next " text2="masterpiece." />
         </div>
         
         {/* Carousel Container */}
-        <div className="w-full relative flex flex-col gap-6 w-full lg:-mx-12 xl:-mx-24 max-w-[140vw] [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)] overflow-hidden">
+        <div className="w-full relative flex flex-col gap-4 w-full lg:-mx-12 xl:-mx-24 max-w-[140vw] [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)] overflow-hidden">
           {/* Row 1 */}
           <div className="flex overflow-hidden w-full whitespace-nowrap">
             <motion.div
@@ -366,7 +381,7 @@ export default function WaitlistPage({ onNavigate }: WaitlistPageProps) {
               transition={{ repeat: Infinity, ease: "linear", duration: 80 }}
             >
               {[...ROW1_VIDEOS, ...ROW1_VIDEOS].map((id, index) => (
-                <div key={index} className="w-[300px] md:w-[400px] lg:w-[500px] aspect-video rounded-[24px] overflow-hidden bg-[#18181b] shrink-0 border border-white/5 shadow-2xl relative shadow-black/80">
+                <div key={index} className="w-[260px] md:w-[350px] lg:w-[430px] aspect-video superellipse-box overflow-hidden bg-[#18181b] shrink-0 border border-white/5 shadow-2xl relative shadow-black/80">
                   <iframe 
                     width="100%" 
                     height="100%" 
@@ -392,7 +407,7 @@ export default function WaitlistPage({ onNavigate }: WaitlistPageProps) {
               transition={{ repeat: Infinity, ease: "linear", duration: 80 }}
             >
               {[...ROW2_VIDEOS, ...ROW2_VIDEOS].map((id, index) => (
-                <div key={index} className="w-[300px] md:w-[400px] lg:w-[500px] aspect-video rounded-[24px] overflow-hidden bg-[#18181b] shrink-0 border border-white/5 shadow-2xl relative shadow-black/80">
+                <div key={index} className="w-[260px] md:w-[350px] lg:w-[430px] aspect-video superellipse-box overflow-hidden bg-[#18181b] shrink-0 border border-white/5 shadow-2xl relative shadow-black/80">
                   <iframe 
                     width="100%" 
                     height="100%" 
@@ -469,7 +484,7 @@ export default function WaitlistPage({ onNavigate }: WaitlistPageProps) {
             >
               If you have any feedback or need any<br/>
               support, please contact us at<br/>
-              <span className="text-white border-b border-white/20 hover:border-white transition-colors cursor-pointer">support@mail.atmos.ai</span>.
+              <span className="text-white border-b border-white/20 hover:border-white transition-colors cursor-pointer">emartinezra2121@gmail.com</span>.
             </motion.div>
           </div>
 

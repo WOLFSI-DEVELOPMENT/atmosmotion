@@ -223,8 +223,8 @@ export default function HomeInterface({ onSendMessage, isLoading, savedMedia, se
 
   return (
     <div className="flex flex-col w-full h-full overflow-y-auto bg-white text-gray-900 font-sans scrollbar-none">
-      {/* Hero Section Container with Background Image and Bottom Rounded Corners */}
-      <div className="relative w-full bg-gray-950 text-white rounded-b-[32px] overflow-hidden flex flex-col items-center justify-center pt-24 pb-20 md:pt-36 md:pb-28 px-6 shadow-xs min-h-[580px] md:min-h-[660px]">
+      {/* Hero Section Container with Background Image */}
+      <div className="relative w-full bg-gray-950 text-white overflow-hidden flex flex-col items-center justify-center pt-24 pb-20 md:pt-36 md:pb-28 px-6 shadow-xs min-h-[580px] md:min-h-[660px]">
         {/* Background Image Layer */}
         <div className="absolute inset-0 z-0">
           <img

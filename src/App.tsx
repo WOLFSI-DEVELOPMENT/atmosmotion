@@ -303,7 +303,7 @@ export function MainApp() {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0, scale: 0.98 }}
           transition={{ duration: 0.3, ease: 'easeInOut' }}
-          className="flex h-screen w-full bg-[#f5f5f5] font-sans text-gray-900 border-none absolute inset-0"
+          className="flex h-screen w-full bg-white font-sans text-gray-900 border-none absolute inset-0"
         >
           <CloudPromoModal 
             isOpen={showCloudPromo}
@@ -324,8 +324,8 @@ export function MainApp() {
               <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
             </div>
           </motion.div>
-          <div className={`flex-1 flex py-2 pr-2 transition-all duration-300 ${isSidebarCollapsed ? 'pl-2' : 'pl-0'}`}>
-            <div className="flex-1 rounded-xl bg-white flex items-center justify-center overflow-hidden w-full h-full relative">
+          <div className="flex-1 flex transition-all duration-300">
+            <div className="flex-1 bg-white flex items-center justify-center overflow-hidden w-full h-full relative">
               {/* Universal Collapse Sidebar Floating Button */}
               <button
                 onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
@@ -381,7 +381,7 @@ export function MainApp() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.2 }}
-                    className="w-full h-full flex flex-col items-center justify-center bg-white rounded-[24px] overflow-hidden"
+                    className="w-full h-full flex flex-col items-center justify-center bg-white overflow-hidden"
                   >
                     <SuperAtmosTrailer />
                   </motion.div>
@@ -517,10 +517,10 @@ export function MainApp() {
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -20 }}
           transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-          className="flex h-screen w-full overflow-hidden bg-[#f5f5f5] font-sans text-gray-900 border-t border-gray-100 absolute inset-0"
+          className="flex h-screen w-full overflow-hidden bg-white font-sans text-gray-900 absolute inset-0"
         >
           <div className="w-[420px] flex-shrink-0 relative z-10">
-            <div className="w-full h-full overflow-hidden border-r border-gray-200 bg-white flex flex-col">
+            <div className="w-full h-full overflow-hidden bg-white flex flex-col">
               <ChatInterface 
                 messages={messages} 
                 onSendMessage={handleSendMessage} 

@@ -135,12 +135,12 @@ export default function ToolsInterface({ savedMedia, setSavedMedia }: ToolsInter
     <div className="relative flex-1 w-full h-full bg-white text-gray-900 font-sans overflow-hidden">
       {/* Premium Full-Page Coming Soon Overlay with Image Hero */}
       <div className="absolute inset-0 bg-white z-50 flex flex-col pointer-events-auto overflow-y-auto pb-12">
-        {/* Top Image: side-to-side and top, rounded corners on the bottom only */}
+        {/* Top Image */}
         <div className="relative w-full overflow-hidden bg-gray-50 border-b border-gray-100">
           <img
             src="https://res.cloudinary.com/dwthgcx5j/image/upload/v1780624501/ElevenLabs_image_gpt-image-2_remove_all_t..._2026-06-05T01_52_10_wrsro6.png"
             alt="Atmos Creation Studio"
-            className="w-full h-auto object-cover rounded-b-[24px] shadow-sm"
+            className="w-full h-auto object-cover shadow-sm"
             id="atmos-creation-mockup-img"
             referrerPolicy="no-referrer"
           />
