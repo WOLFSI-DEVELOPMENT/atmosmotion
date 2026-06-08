@@ -126,42 +126,41 @@ export default function HomeInterface({ onSendMessage, isLoading, savedMedia, se
   
   const [isMediaModalOpen, setIsMediaModalOpen] = useState(false);
   const [selectedMediaIds, setSelectedMediaIds] = useState<string[]>([]);
-  const [selectedModel, setSelectedModel] = useState<string>(aiModel || 'Plan');
+  const [selectedModel, setSelectedModel] = useState<string>(aiModel || 'plan');
   const [isOptimizing, setIsOptimizing] = useState(false);
   const [isAttachTrayOpen, setIsAttachTrayOpen] = useState(false);
   const [agentModeIndex, setAgentModeIndex] = useState(0);
   
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const MODELS = ['Agent Mode', 'Plan', 'Gemini 3.5 Flash', 'Gemini 3 Flash Preview', 'Gemini 3.1 Flash Lite', 'Gemma-4-31b-it', 'Kimi 2.6'];
+  const MODELS = ['auto', 'Agent', 'plan', 'lite 3.1', 'flash 3.5', 'pro 3.1', 'kimi 2.6'];
   const AGENT_MODES = ['Agent', 'Plan', 'Create'];
 
   const handleAgentModeCycle = () => {
     const nextIndex = (agentModeIndex + 1) % AGENT_MODES.length;
     setAgentModeIndex(nextIndex);
     const nextMode = AGENT_MODES[nextIndex];
-    const modelName = nextMode === 'Agent' ? 'Agent Mode' : nextMode;
+    const modelName = nextMode === 'Create' ? 'auto' : nextMode;
     setSelectedModel(modelName);
     setAiModel && setAiModel(modelName);
   };
 
   const formatModelName = (name: string) => {
     switch (name) {
-      case 'Gemini 3.5 Flash':
-        return (
-          <span className="flex items-center gap-1.5">
-            Flash
-            <span className="bg-[#e8f0fe] text-[#1967d2] text-[10px] uppercase font-bold px-1.5 py-0.5 rounded-[4px] tracking-wide inline-flex items-center justify-center leading-none">NEW</span>
-          </span>
-        );
-      case 'Gemini 3 Flash Preview':
-        return 'Flash';
-      case 'Gemini 3.1 Flash Lite':
-        return 'Flash Lite';
-      case 'Gemma-4-31b-it':
-        return 'Gemma';
-      case 'Kimi 2.6':
-        return 'Kimi 2.6';
+      case 'auto':
+        return 'auto';
+      case 'Agent':
+        return 'Agent';
+      case 'plan':
+        return 'plan';
+      case 'lite 3.1':
+        return 'lite 3.1';
+      case 'flash 3.5':
+        return 'flash 3.5';
+      case 'pro 3.1':
+        return 'pro 3.1';
+      case 'kimi 2.6':
+        return 'kimi 2.6';
       default:
         return name;
     }
@@ -171,7 +170,7 @@ export default function HomeInterface({ onSendMessage, isLoading, savedMedia, se
     e.preventDefault();
     if (!input.trim() || isLoading) return;
     const mediaFiles = savedMedia.filter(m => selectedMediaIds.includes(m.id));
-    onSendMessage(input, undefined, undefined, selectedModel !== 'Plan', selectedSkills, mediaFiles, selectedModel);
+    onSendMessage(input, undefined, undefined, selectedModel !== 'plan', selectedSkills, mediaFiles, selectedModel);
     setInput('');
     setSelectedMediaIds([]);
   };
@@ -245,7 +244,7 @@ export default function HomeInterface({ onSendMessage, isLoading, savedMedia, se
               className="flex items-center gap-2 bg-transparent p-2 text-[14.5px] font-medium text-[#1a1a2e] transition-opacity hover:opacity-60"
             >
               <Star className="h-4 w-4" strokeWidth={2.2} />
-              <span>{formatModelName(selectedModel === 'Agent Mode' ? 'Agent Mode' : selectedModel)}</span>
+              <span>{formatModelName(selectedModel)}</span>
               <ChevronDown className="h-4 w-4" strokeWidth={2.2} />
             </button>
             {openDropdown === 'model' && (
