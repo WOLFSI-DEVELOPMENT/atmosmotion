@@ -304,6 +304,55 @@ export default function HomeInterface({ onSendMessage, isLoading, savedMedia, se
           </h2>
 
           <form onSubmit={handleSubmit} className="relative w-full">
+            <div className="absolute bottom-full right-0 z-30 mb-3">
+              <button
+                type="button"
+                onClick={() => setIsModelMenuOpen(prev => !prev)}
+                className="flex h-8 max-w-[132px] items-center gap-1.5 rounded-full bg-[#f0f1f5] px-3 text-[12px] font-medium text-[#50546a] transition-colors hover:bg-[#e4e6eb]"
+                style={{ cornerShape: 'superellipse(2)' } as React.CSSProperties}
+              >
+                {renderModelIcon(selectedModel)}
+                <span className="truncate">{renderModelLabel(selectedModel)}</span>
+              </button>
+
+              {isModelMenuOpen && (
+                <div className="absolute bottom-full right-0 mb-2 w-[232px] rounded-[18px] border border-gray-200 bg-white p-2">
+                  <div className="mb-2 flex w-full rounded-full bg-gray-100 p-1">
+                    {modelTabs.map(model => (
+                      <button
+                        key={model}
+                        type="button"
+                        onClick={() => chooseModel(model)}
+                        className={`flex h-7 flex-1 items-center justify-center gap-1.5 rounded-full text-xs font-medium transition-colors ${
+                          selectedModel === model ? 'bg-white text-black' : 'bg-transparent text-gray-500 hover:text-gray-900'
+                        }`}
+                      >
+                        {renderModelIcon(model)}
+                        {model.toLowerCase()}
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="flex flex-col gap-1">
+                    {modelOptions.map(model => (
+                      <button
+                        key={model}
+                        type="button"
+                        onClick={() => chooseModel(model)}
+                        className="flex w-full items-center justify-between rounded-[12px] px-3 py-2.5 text-left text-sm font-medium transition-colors hover:bg-gray-100"
+                      >
+                        <span className="flex items-center gap-2">
+                          {renderModelIcon(model)}
+                          {renderModelLabel(model)}
+                        </span>
+                        {selectedModel === model && <ListChecks className="h-3.5 w-3.5 text-gray-500" strokeWidth={2.2} />}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
             <div
               className={`absolute bottom-full left-0 right-0 z-0 mb-[-20px] overflow-hidden rounded-t-[40px] bg-white px-3 transition-all duration-300 ${
                 isAttachTrayOpen
@@ -377,7 +426,7 @@ export default function HomeInterface({ onSendMessage, isLoading, savedMedia, se
                   }
                 }}
                 placeholder="Ask me anything..."
-                className="block min-h-[64px] max-h-[200px] w-full resize-none overflow-y-auto bg-transparent pl-[104px] pr-[132px] pb-2 pt-5 text-[15px] leading-relaxed text-[#1a1a2e] outline-none placeholder:text-[#b0b3be]"
+                className="block min-h-[64px] max-h-[200px] w-full resize-none overflow-y-auto bg-transparent pl-[104px] pr-[56px] pb-2 pt-5 text-[15px] leading-relaxed text-[#1a1a2e] outline-none placeholder:text-[#b0b3be]"
                 disabled={isLoading}
                 rows={1}
               />
@@ -406,55 +455,6 @@ export default function HomeInterface({ onSendMessage, isLoading, savedMedia, se
                     ))}
                   </div>
                 </button>
-
-                <div className="absolute bottom-2.5 right-[52px] z-20">
-                  <button
-                    type="button"
-                    onClick={() => setIsModelMenuOpen(prev => !prev)}
-                    className="flex h-8 max-w-[112px] items-center gap-1.5 rounded-full bg-[#f0f1f5] px-3 text-[12px] font-medium text-[#50546a] transition-colors hover:bg-[#e4e6eb]"
-                    style={{ cornerShape: 'superellipse(2)' } as React.CSSProperties}
-                  >
-                    {renderModelIcon(selectedModel)}
-                    <span className="truncate">{renderModelLabel(selectedModel)}</span>
-                  </button>
-
-                  {isModelMenuOpen && (
-                    <div className="absolute bottom-full right-0 mb-2 w-[232px] rounded-[18px] border border-gray-200 bg-white p-2">
-                      <div className="mb-2 flex w-full rounded-full bg-gray-100 p-1">
-                        {modelTabs.map(model => (
-                          <button
-                            key={model}
-                            type="button"
-                            onClick={() => chooseModel(model)}
-                            className={`flex h-7 flex-1 items-center justify-center gap-1.5 rounded-full text-xs font-medium transition-colors ${
-                              selectedModel === model ? 'bg-white text-black' : 'bg-transparent text-gray-500 hover:text-gray-900'
-                            }`}
-                          >
-                            {renderModelIcon(model)}
-                            {model.toLowerCase()}
-                          </button>
-                        ))}
-                      </div>
-
-                      <div className="flex flex-col gap-1">
-                        {modelOptions.map(model => (
-                          <button
-                            key={model}
-                            type="button"
-                            onClick={() => chooseModel(model)}
-                            className="flex w-full items-center justify-between rounded-[12px] px-3 py-2.5 text-left text-sm font-medium transition-colors hover:bg-gray-100"
-                          >
-                            <span className="flex items-center gap-2">
-                              {renderModelIcon(model)}
-                              {renderModelLabel(model)}
-                            </span>
-                            {selectedModel === model && <ListChecks className="h-3.5 w-3.5 text-gray-500" strokeWidth={2.2} />}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
 
                 <button
                   type="submit"
