@@ -404,14 +404,15 @@ export function MainApp() {
                   <button
                     type="button"
                     onClick={() => setIsModelMenuOpen(prev => !prev)}
-                    className="flex h-10 min-w-[132px] items-center gap-2 border-b border-gray-200 bg-transparent px-1 text-[14px] font-medium text-gray-700"
+                    className="flex h-10 min-w-[132px] items-center gap-2 rounded-[24px] bg-gray-100 px-4 text-[14px] font-medium text-gray-700 transition-colors hover:bg-gray-200"
+                    style={{ cornerShape: 'superellipse(2)' } as React.CSSProperties}
                   >
                     {hasPickedModel && renderModelIcon(aiModel)}
                     <span>{hasPickedModel ? renderModelLabel(aiModel) : 'Model'}</span>
                   </button>
 
                   {isModelMenuOpen && (
-                    <div className="absolute left-0 top-full mt-2 w-[232px] rounded-[18px] bg-white p-2">
+                    <div className="absolute left-0 top-full mt-2 w-[232px] rounded-[18px] border border-gray-200 bg-white p-2">
                       <div className="mb-2 flex w-full rounded-full bg-gray-100 p-1">
                         {modelTabs.map(model => (
                           <button

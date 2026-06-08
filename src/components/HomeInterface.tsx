@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { motion } from 'motion/react';
-import { ArrowUp, Camera, FileText, Image as ImageLucide, Layers2, Plus as PlusIcon } from 'lucide-react';
+import { ArrowUp, Camera, Clock3, FileText, Image as ImageLucide, Layers2, Plus as PlusIcon, Ratio, WandSparkles } from 'lucide-react';
 import { PlusSignIcon as Plus, ArrowDown01Icon as ChevronDown, LayersLogoIcon as Aperture, TextFontIcon as Type, Chart03Icon as BarChart2, CarouselHorizontal02Icon as Layout, ArrowMoveDownRightIcon as ArrowRight, GridIcon as Blocks, Clock01Icon as Clock, ComputerIcon as Monitor, SparklesIcon as Sparkles, DropletIcon as Droplet, PaintBoardIcon as Palette, Layers01Icon as Layers, Tick01Icon as Check, AtIcon as AtSign, Image01Icon as ImageIcon, Cancel01Icon as X, PlayIcon as Play, AttachmentIcon, File01Icon, File02Icon, Folder01Icon, AiEditingIcon, Album02Icon, NoteIcon, VoiceIdIcon } from 'hugeicons-react';
 import { SavedMedia, SavedVideo } from '../types';
 import MediaModal from './MediaModal';
@@ -227,12 +227,15 @@ export default function HomeInterface({ onSendMessage, isLoading, savedMedia, se
               }`}
               style={{ cornerShape: 'superellipse(2.5)' } as React.CSSProperties}
             >
-              <div className="flex gap-2.5">
+              <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth px-0.5 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                 {[
                   { label: 'Image', icon: ImageLucide, action: () => setIsMediaModalOpen(true) },
                   { label: 'File', icon: FileText, action: () => setIsMediaModalOpen(true) },
                   { label: 'Logo', icon: Layers2, action: () => setIsMediaModalOpen(true) },
                   { label: 'Screenshot', icon: Camera, action: () => setIsMediaModalOpen(true) },
+                  { label: 'Skills', icon: WandSparkles, action: () => {} },
+                  { label: 'Length', icon: Clock3, action: () => {} },
+                  { label: 'Aspect ratio', icon: Ratio, action: () => {} },
                 ].map((item) => {
                   const Icon = item.icon;
                   return (
@@ -240,7 +243,7 @@ export default function HomeInterface({ onSendMessage, isLoading, savedMedia, se
                       key={item.label}
                       type="button"
                       onClick={item.action}
-                      className="flex h-[82px] flex-1 flex-col items-center justify-center gap-1.5 rounded-[40px] bg-[#f3f4f7] text-[11.5px] font-medium tracking-[0.01em] text-[#50546a] transition hover:-translate-y-px hover:bg-[#eaebef] active:scale-[0.97]"
+                      className="flex h-[82px] min-w-[186px] snap-center flex-col items-center justify-center gap-1.5 rounded-[40px] bg-[#f3f4f7] text-[11.5px] font-medium tracking-[0.01em] text-[#50546a] transition duration-300 ease-out hover:-translate-y-px hover:scale-[1.015] hover:bg-[#eaebef] active:scale-[0.97]"
                       style={{ cornerShape: 'superellipse(2.5)' } as React.CSSProperties}
                     >
                       <Icon className="h-[22px] w-[22px]" strokeWidth={1.6} />
