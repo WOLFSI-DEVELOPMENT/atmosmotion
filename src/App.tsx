@@ -166,6 +166,20 @@ export function MainApp() {
     setAppMode('home');
   };
 
+  const handleOpenSavedVideo = (v: SavedVideo) => {
+    if (v.messages && v.messages.length > 0) {
+      setDataHistory(v.dataHistory || []);
+      setHistoryIndex(v.historyIndex ?? -1);
+      setMessages(v.messages);
+    } else if (v.code) {
+      setDataHistory([{ code: v.code, durationInFrames: v.durationInFrames, fps: v.fps || 30, compositionWidth: v.compositionWidth || 1080, compositionHeight: v.compositionHeight || 1080 }]);
+      setHistoryIndex(0);
+      setMessages([{ id: Date.now().toString(), role: 'user', text: v.prompt }]);
+    }
+    setCurrentProjectId(v.id);
+    setAppMode('editor');
+  };
+
   useEffect(() => {
     if (currentProjectId) {
       setSavedVideos(prev => 
@@ -321,7 +335,7 @@ export function MainApp() {
             className="h-full overflow-hidden flex-shrink-0"
           >
             <div className="w-[72px] h-full">
-              <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
+              <Sidebar activeTab={activeTab} onTabChange={setActiveTab} savedVideos={savedVideos} onOpenVideo={handleOpenSavedVideo} />
             </div>
           </motion.div>
           <div className="flex-1 flex transition-all duration-300">
@@ -358,19 +372,7 @@ export function MainApp() {
                       savedVideos={savedVideos}
                       aiModel={aiModel}
                       setAiModel={setAiModel}
-                      onOpenVideo={(v) => {
-                        if (v.messages && v.messages.length > 0) {
-                          setDataHistory(v.dataHistory || []);
-                          setHistoryIndex(v.historyIndex ?? -1);
-                          setMessages(v.messages);
-                        } else if (v.code) {
-                          setDataHistory([{ code: v.code, durationInFrames: v.durationInFrames, fps: v.fps || 30, compositionWidth: v.compositionWidth || 1080, compositionHeight: v.compositionHeight || 1080 }]);
-                          setHistoryIndex(0);
-                          setMessages([{ id: Date.now().toString(), role: 'user', text: v.prompt }]);
-                        }
-                        setCurrentProjectId(v.id);
-                        setAppMode('editor');
-                      }}
+                      onOpenVideo={handleOpenSavedVideo}
                     />
                   </motion.div>
                 )}
@@ -424,19 +426,7 @@ export function MainApp() {
 
                         setAppMode('editor');
                       }}
-                      onOpenVideo={(v) => {
-                        if (v.messages && v.messages.length > 0) {
-                          setDataHistory(v.dataHistory || []);
-                          setHistoryIndex(v.historyIndex ?? -1);
-                          setMessages(v.messages);
-                        } else if (v.code) {
-                          setDataHistory([{ code: v.code, durationInFrames: v.durationInFrames, fps: v.fps || 30, compositionWidth: v.compositionWidth || 1080, compositionHeight: v.compositionHeight || 1080 }]);
-                          setHistoryIndex(0);
-                          setMessages([{ id: Date.now().toString(), role: 'user', text: v.prompt }]);
-                        }
-                        setCurrentProjectId(v.id);
-                        setAppMode('editor');
-                      }}
+                      onOpenVideo={handleOpenSavedVideo}
                       onCreateFolder={(name, color) => {
                         setSavedFolders(prev => [{ id: Date.now().toString(), name, color, videoIds: [] }, ...prev]);
                       }}

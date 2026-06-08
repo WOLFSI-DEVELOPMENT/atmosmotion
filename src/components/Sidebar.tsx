@@ -1,17 +1,22 @@
-import React, { useState } from 'react';
-import { DashboardCircleAddIcon, DiscoverCircleIcon, FolderLibraryIcon, Download01Icon, UserAdd01Icon, Bug02Icon, Cancel01Icon, UserCircleIcon, AiGenerativeIcon, Store01Icon } from 'hugeicons-react';
-import { HelpCircle, Blocks, Sparkles } from 'lucide-react';
+import React, { useMemo, useState } from 'react';
+import { DashboardCircleAddIcon, UserAdd01Icon, Bug02Icon, Cancel01Icon, UserCircleIcon, Store01Icon } from 'hugeicons-react';
+import { HelpCircle, Blocks, Search } from 'lucide-react';
 import AccountSettingsModal from './AccountSettingsModal';
+import { SavedVideo } from '../types';
 
 interface SidebarProps {
   activeTab: 'create' | 'super-atmos' | 'marketplace' | 'tools';
   onTabChange: (tab: 'create' | 'super-atmos' | 'marketplace' | 'tools') => void;
+  savedVideos: SavedVideo[];
+  onOpenVideo: (video: SavedVideo) => void;
 }
 
-export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
+export default function Sidebar({ activeTab, onTabChange, savedVideos, onOpenVideo }: SidebarProps) {
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   const [feedbackType, setFeedbackType] = useState<'feature' | 'bug'>('feature');
   const [feedbackText, setFeedbackText] = useState('');
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   
   const [isInviteOpen, setIsInviteOpen] = useState(false);
   const [inviteCode, setInviteCode] = useState<string | null>(null);
@@ -22,8 +27,16 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
   const [isFaqOpen, setIsFaqOpen] = useState(false);
   const [isAccountOpen, setIsAccountOpen] = useState(false);
 
+  const filteredVideos = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+    if (!query) return savedVideos.slice(0, 8);
+    return savedVideos
+      .filter((video) => video.prompt.toLowerCase().includes(query))
+      .slice(0, 8);
+  }, [savedVideos, searchQuery]);
+
   const navButtonClass = (isActive = false) =>
-    `h-10 w-14 rounded-full flex items-center justify-center transition-colors ${
+    `h-9 w-12 rounded-full flex items-center justify-center transition-colors ${
       isActive
         ? 'bg-gray-900 text-white'
         : 'bg-transparent text-gray-500 hover:bg-gray-100 hover:text-gray-900'
@@ -107,14 +120,14 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
           <DashboardCircleAddIcon className="w-5 h-5 flex-shrink-0" strokeWidth={activeTab === 'create' ? 2 : 1.5} />
         </button>
 
-        {/* Super Atmos Tab */}
+        {/* Search */}
         <button
-          onClick={() => onTabChange('super-atmos')}
-          className={navButtonClass(activeTab === 'super-atmos')}
-          title="Super Atmos"
-          aria-label="Super Atmos"
+          onClick={() => setIsSearchOpen(true)}
+          className={navButtonClass(false)}
+          title="Search"
+          aria-label="Search recent videos"
         >
-          <AiGenerativeIcon className="w-5 h-5 flex-shrink-0" strokeWidth={activeTab === 'super-atmos' ? 2 : 1.5} />
+          <Search className="w-5 h-5 flex-shrink-0" strokeWidth={1.8} />
         </button>
 
         {/* Marketplace Tab */}
@@ -178,6 +191,70 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
           <UserCircleIcon className="w-5 h-5 flex-shrink-0" />
         </button>
       </div>
+
+      {/* Search Modal */}
+      {isSearchOpen && (
+        <div className="fixed inset-0 z-[100] flex items-start justify-center bg-black/20 p-5 pt-10 backdrop-blur-sm">
+          <div className="w-full max-w-3xl overflow-hidden rounded-[32px] bg-white shadow-none ring-1 ring-gray-200">
+            <div className="p-3">
+              <div className="flex h-14 items-center gap-3 rounded-full bg-gray-100 px-5 text-gray-500">
+                <Search className="h-5 w-5 flex-shrink-0" strokeWidth={1.8} />
+                <input
+                  autoFocus
+                  value={searchQuery}
+                  onChange={(event) => setSearchQuery(event.target.value)}
+                  placeholder="Search recent videos"
+                  className="h-full min-w-0 flex-1 bg-transparent text-lg text-gray-900 placeholder:text-gray-400 focus:outline-none"
+                />
+                <button
+                  onClick={() => {
+                    setIsSearchOpen(false);
+                    setSearchQuery('');
+                  }}
+                  className="rounded-full px-3 py-1 text-sm font-medium text-gray-500 hover:bg-gray-200 hover:text-gray-900"
+                >
+                  Esc
+                </button>
+              </div>
+            </div>
+
+            <div className="min-h-[150px] border-t border-gray-100 px-5 py-4">
+              {filteredVideos.length === 0 ? (
+                <div className="flex h-28 items-center justify-center gap-2 text-sm font-semibold text-gray-400">
+                  <Search className="h-4 w-4" strokeWidth={1.8} />
+                  Nothing matches
+                </div>
+              ) : (
+                <div className="flex flex-col gap-1">
+                  {filteredVideos.map((video) => (
+                    <button
+                      key={video.id}
+                      onClick={() => {
+                        onOpenVideo(video);
+                        setIsSearchOpen(false);
+                        setSearchQuery('');
+                      }}
+                      className="flex w-full items-center gap-3 rounded-2xl px-3 py-3 text-left transition-colors hover:bg-gray-100"
+                    >
+                      <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-gray-900 text-white">
+                        <Search className="h-4 w-4" strokeWidth={1.8} />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="truncate text-sm font-medium text-gray-900">{video.prompt || 'Untitled video'}</div>
+                        <div className="mt-0.5 text-xs text-gray-400">{new Date(video.date).toLocaleDateString()}</div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="flex items-center justify-end border-t border-gray-100 px-5 py-3">
+              <div className="rounded-full bg-gray-100 px-3 py-1.5 text-sm font-medium text-gray-500">Shortcuts</div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Invite Modal */}
       {isInviteOpen && (
