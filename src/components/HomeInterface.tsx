@@ -24,51 +24,51 @@ const AVAILABLE_SKILLS = [
 
 const PROMPT_CARDS = [
   {
-    title: 'Music Video',
+    title: 'Product Reveal',
     image: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?auto=format&fit=crop&w=420&q=80',
-    prompt: 'Create a moody music video scene with fast cuts, spotlight haze, and bold lyric typography.',
+    prompt: 'Create an Apple-style product reveal with a glossy device silhouette, soft studio lighting, elegant typography, and smooth parallax motion.',
     rotate: '-rotate-6',
   },
   {
-    title: 'Ad Video',
+    title: 'Keynote Intro',
     image: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=420&q=80',
-    prompt: 'Create a polished product ad with macro beauty shots, clean captions, and smooth camera moves.',
+    prompt: 'Create a clean keynote intro with huge minimal type, precise easing, subtle depth, and a bright Apple-inspired stage reveal.',
     rotate: 'rotate-3',
   },
   {
-    title: 'Movie',
+    title: 'Feature Cards',
     image: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=420&q=80',
-    prompt: 'Build a cinematic movie trailer opener with dramatic atmosphere and sweeping title reveals.',
+    prompt: 'Animate stacked feature cards that glide into place with translucent panels, crisp icons, and refined Apple-style motion.',
     rotate: '-rotate-2',
   },
   {
-    title: 'Shorts',
+    title: 'App Tour',
     image: 'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=420&q=80',
-    prompt: 'Make a vertical shorts edit with quick scene changes, punchy captions, and creator-style pacing.',
+    prompt: 'Create an app interface walkthrough with floating screens, soft shadows, fluid transitions, and concise premium captions.',
     rotate: 'rotate-2',
   },
   {
-    title: 'Music',
+    title: 'Logo System',
     image: 'https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&w=420&q=80',
-    prompt: 'Create an animated album promo with waveform motion, soft light leaks, and track title cards.',
+    prompt: 'Design a polished logo system animation with geometric alignment, gentle blur reveals, and minimal monochrome composition.',
     rotate: '-rotate-3',
   },
   {
-    title: 'E-Commerce',
+    title: 'Data Motion',
     image: 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&w=420&q=80',
-    prompt: 'Generate an e-commerce product showcase with floating items, price callouts, and clean transitions.',
+    prompt: 'Animate beautiful product metrics with counting numbers, glassy charts, calm camera motion, and Apple-style restraint.',
     rotate: 'rotate-1',
   },
   {
-    title: 'Social',
+    title: 'Launch Teaser',
     image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=420&q=80',
-    prompt: 'Design a social media promo with stacked screens, bold headlines, and scroll-stopping motion.',
+    prompt: 'Create a cinematic launch teaser with macro details, sparse typography, soft gradients, and elegant build-up pacing.',
     rotate: '-rotate-2',
   },
   {
-    title: 'Branding',
+    title: 'Spatial UI',
     image: 'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=420&q=80',
-    prompt: 'Create a branding reveal with logo cards, palette swatches, and refined type animation.',
+    prompt: 'Create a spatial interface scene with floating panels, depth-aware motion, refined highlights, and a premium Apple feel.',
     rotate: 'rotate-4',
   },
 ];
@@ -145,7 +145,7 @@ export default function HomeInterface({ onSendMessage, isLoading, savedMedia, se
   
   const [isMediaModalOpen, setIsMediaModalOpen] = useState(false);
   const [selectedMediaIds, setSelectedMediaIds] = useState<string[]>([]);
-  const [selectedModel, setSelectedModel] = useState<string>(aiModel || 'plan');
+  const [selectedModel, setSelectedModel] = useState<string>(aiModel || 'Agent');
   const [isOptimizing, setIsOptimizing] = useState(false);
   const [isAttachTrayOpen, setIsAttachTrayOpen] = useState(false);
   const [agentModeIndex, setAgentModeIndex] = useState(0);
@@ -167,7 +167,9 @@ export default function HomeInterface({ onSendMessage, isLoading, savedMedia, se
     e.preventDefault();
     if (!input.trim() || isLoading) return;
     const mediaFiles = savedMedia.filter(m => selectedMediaIds.includes(m.id));
-    onSendMessage(input, undefined, undefined, selectedModel !== 'plan', selectedSkills, mediaFiles, selectedModel);
+    const preferredFont = localStorage.getItem('preferredFont');
+    const fontInstruction = preferredFont ? `\n\nUse only the "${preferredFont}" font for all text in the generated video.` : '';
+    onSendMessage(`${input}${fontInstruction}`, undefined, undefined, selectedModel !== 'plan', selectedSkills, mediaFiles, selectedModel);
     setInput('');
     setSelectedMediaIds([]);
   };
@@ -353,7 +355,7 @@ export default function HomeInterface({ onSendMessage, isLoading, savedMedia, se
           </form>
 
           <div className="w-screen max-w-[1180px]">
-            <h3 className="mb-8 text-center text-[26px] font-bold tracking-tight text-[#171717]">Add Skills for a Better Start</h3>
+            <h3 className="mb-8 text-center text-[26px] font-bold tracking-tight text-[#171717]">or start with a prompt</h3>
             <div className="flex snap-x snap-mandatory gap-4 overflow-x-auto px-7 pb-8 pt-3 scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               {PROMPT_CARDS.map((card, index) => (
                 <button

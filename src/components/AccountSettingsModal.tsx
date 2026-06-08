@@ -34,6 +34,8 @@ export default function AccountSettingsModal({ isOpen, onClose }: AccountSetting
   
   // Font state
   const [selectedFont, setSelectedFont] = useState(localStorage.getItem('preferredFont') || 'Inter');
+  const [uploadedFontName, setUploadedFontName] = useState(localStorage.getItem('uploadedFontName') || '');
+  const googleFonts = ['Inter', 'Roboto', 'Space Grotesk', 'Outfit', 'Playfair Display', 'DM Sans', 'Manrope', 'Geist', 'Instrument Sans', 'Poppins'];
   
   if (!isOpen) return null;
 
@@ -49,7 +51,24 @@ export default function AccountSettingsModal({ isOpen, onClose }: AccountSetting
   const handleUpdateFont = (font: string) => {
     setSelectedFont(font);
     localStorage.setItem('preferredFont', font);
-    // Need to trigger re-render or global css change ideally
+    localStorage.setItem('preferredFontSource', googleFonts.includes(font) ? 'google' : 'custom');
+  };
+
+  const handleUploadFont = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    const fontName = file.name.replace(/\.(ttf|otf|woff|woff2)$/i, '');
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataUrl = String(reader.result || '');
+      localStorage.setItem('uploadedFontName', fontName);
+      localStorage.setItem('uploadedFontDataUrl', dataUrl);
+      localStorage.setItem('preferredFontSource', 'custom');
+      localStorage.setItem('preferredFont', fontName);
+      setUploadedFontName(fontName);
+      setSelectedFont(fontName);
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleClearData = () => {
@@ -233,11 +252,27 @@ export default function AccountSettingsModal({ isOpen, onClose }: AccountSetting
               <div className="flex flex-col max-w-xl">
                  <div className="mb-6">
                    <h3 className="text-[15px] font-semibold text-gray-900 mb-1">Typography Settings</h3>
-                   <p className="text-[14px] text-gray-500">Choose your preferred font for the application interface.</p>
+                   <p className="text-[14px] text-gray-500">Choose the font Atmos should use for generated videos.</p>
                  </div>
                  
+                 <label className="mb-5 flex cursor-pointer flex-col gap-2 rounded-xl border border-dashed border-gray-300 bg-gray-50 p-4 transition-colors hover:bg-gray-100">
+                   <span className="text-[14px] font-semibold text-gray-900">Upload your own font</span>
+                   <span className="text-[13px] text-gray-500">{uploadedFontName ? `Selected: ${uploadedFontName}` : 'Supports .ttf, .otf, .woff, and .woff2 files.'}</span>
+                   <input
+                     type="file"
+                     accept=".ttf,.otf,.woff,.woff2"
+                     onChange={handleUploadFont}
+                     className="hidden"
+                   />
+                 </label>
+
+                 <div className="mb-3 flex items-center justify-between">
+                   <h4 className="text-[14px] font-semibold text-gray-900">Google Fonts library</h4>
+                   <span className="text-[12px] text-gray-400">Preview selection</span>
+                 </div>
+
                  <div className="flex flex-col gap-3">
-                   {['Inter', 'Space Grotesk', 'Outfit', 'Playfair Display'].map((font) => (
+                   {googleFonts.map((font) => (
                      <div 
                        key={font}
                        onClick={() => handleUpdateFont(font)}

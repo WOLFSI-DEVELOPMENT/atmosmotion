@@ -20,7 +20,7 @@ import { Message, RemotionData, ChatResponse, Source, SavedMedia, SavedVideo, Vi
 import WaitlistPage from './components/auth/WaitlistPage';
 import EnterCodePage from './components/auth/EnterCodePage';
 import LoginPage from './components/auth/LoginPage';
-import { PlayIcon as Play, AiGenerativeIcon, SidebarLeft01Icon } from 'hugeicons-react';
+import { PlayIcon as Play, AiGenerativeIcon, Atom02Icon, SidebarLeft01Icon } from 'hugeicons-react';
 import PrivacyPage from './components/auth/PrivacyPage';
 import TermsPage from './components/auth/TermsPage';
 import SuperAtmosTrailer from './components/SuperAtmosTrailer';
@@ -65,7 +65,7 @@ export function MainApp() {
     }
     if (name === 'Agent') return <Bot className="h-4 w-4 text-black" strokeWidth={2} />;
     if (name === 'plan') return <ListChecks className="h-4 w-4 text-black" strokeWidth={2} />;
-    return <Sparkle className="h-4 w-4 text-black" strokeWidth={2} />;
+    return <Atom02Icon className="h-4 w-4 text-black" strokeWidth={2} />;
   };
 
   const renderModelLabel = (name: string) => {
