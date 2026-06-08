@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { motion } from 'motion/react';
-import { ArrowUp } from 'lucide-react';
+import { ArrowUp, Plus as PlusIcon } from 'lucide-react';
 import { PlusSignIcon as Plus, ArrowDown01Icon as ChevronDown, LayersLogoIcon as Aperture, TextFontIcon as Type, Chart03Icon as BarChart2, CarouselHorizontal02Icon as Layout, ArrowMoveDownRightIcon as ArrowRight, GridIcon as Blocks, Clock01Icon as Clock, ComputerIcon as Monitor, SparklesIcon as Sparkles, DropletIcon as Droplet, PaintBoardIcon as Palette, Layers01Icon as Layers, Tick01Icon as Check, AtIcon as AtSign, Image01Icon as ImageIcon, Cancel01Icon as X, PlayIcon as Play, AttachmentIcon, File01Icon, File02Icon, Folder01Icon, AiEditingIcon, Album02Icon, NoteIcon, VoiceIdIcon } from 'hugeicons-react';
 import { SavedMedia, SavedVideo } from '../types';
 import MediaModal from './MediaModal';
@@ -223,29 +223,19 @@ export default function HomeInterface({ onSendMessage, isLoading, savedMedia, se
 
   return (
     <div className="flex flex-col w-full h-full overflow-y-auto bg-white text-gray-900 font-sans scrollbar-none">
-      {/* Hero Section Container with Background Image */}
-      <div className="relative w-full bg-gray-950 text-white overflow-hidden flex flex-col items-center justify-center pt-24 pb-20 md:pt-36 md:pb-28 px-6 shadow-xs min-h-[580px] md:min-h-[660px]">
-        {/* Background Image Layer */}
-        <div className="absolute inset-0 z-0">
-          <img
-            src="https://res.cloudinary.com/dwthgcx5j/image/upload/v1780624501/ElevenLabs_image_gpt-image-2_remove_all_t..._2026-06-05T01_52_10_wrsro6.png"
-            alt="Studio Background"
-            className="w-full h-full object-cover opacity-100"
-            referrerPolicy="no-referrer"
-            id="home-canvas-bg"
-          />
-        </div>
+      {/* Hero Composer */}
+      <div className="relative flex min-h-[520px] w-full items-center justify-center overflow-hidden bg-white px-6 pb-16 pt-24 md:min-h-[620px] md:pb-20 md:pt-32">
+        <div className="relative z-10 flex w-full max-w-[660px] flex-col items-center gap-5">
+          <h2 className="w-full text-center [font-family:Georgia,serif] text-4xl font-bold leading-tight tracking-tight text-[#0a0a0a] md:text-[40px]">
+            What do you want to create?
+          </h2>
 
-        {/* Foreground Creative Workspace content */}
-        <div className="relative z-10 w-full max-w-[800px] flex flex-col items-center">
-          <h2 className="text-white font-bold text-2xl md:text-3xl mb-6 text-center tracking-tight drop-shadow-xs">What do you want to create?</h2>
-          
-          <form onSubmit={handleSubmit} className="bg-white/10 backdrop-blur-md border border-white/15 rounded-3xl p-1 relative w-full max-w-[640px]">
-            <div className="relative bg-white rounded-[20px] p-3 px-4 flex flex-col">
+          <form onSubmit={handleSubmit} className="relative w-full">
+            <div className="relative overflow-hidden rounded-[40px] bg-white ring-1 ring-[#e2e4e9] transition-shadow focus-within:ring-[#c8cdd8] focus-within:shadow-[0_2px_16px_rgba(0,0,0,0.06)]" style={{ cornerShape: 'superellipse(2.5)' } as React.CSSProperties}>
               {selectedMediaObjs.length > 0 && (
-                <div className="flex flex-wrap gap-2 mb-2">
+                <div className="flex flex-wrap gap-2 px-5 pt-4">
                   {selectedMediaObjs.map(media => (
-                    <div key={media.id} className="flex items-center gap-1.5 bg-[#f0f0f0] text-black px-2.5 py-1 rounded-lg text-[13px] font-medium border-none shadow-none outline-none">
+                    <div key={media.id} className="flex items-center gap-1.5 bg-[#f0f1f5] text-[#1a1a2e] px-2.5 py-1 rounded-lg text-[13px] font-medium border-none shadow-none outline-none">
                       <ImageIcon className="w-3.5 h-3.5 text-black" />
                       <span>@{media.name}</span>
                       <button 
@@ -275,139 +265,59 @@ export default function HomeInterface({ onSendMessage, isLoading, savedMedia, se
                     }
                   }
                 }}
-                placeholder="Ask anything, @ to mention, / for actions"
-                className="w-[calc(100%-44px)] bg-transparent text-[#1f1f1f] placeholder:text-[#8e8e8e] text-[15px] outline-none resize-none pb-2 min-h-[40px] max-h-[200px] overflow-y-auto block"
+                placeholder="Ask me anything..."
+                className="block min-h-[64px] max-h-[200px] w-full resize-none overflow-y-auto bg-transparent px-[56px] pb-2 pt-5 text-[15px] leading-relaxed text-[#1a1a2e] outline-none placeholder:text-[#b0b3be]"
                 disabled={isLoading}
                 rows={1}
               />
-              <div className="flex items-center gap-2 mt-1">
-              </div>
-              <div className="absolute right-2 bottom-2 flex items-center gap-1">
+
+              <div className="relative h-[50px]">
                 <button
                   type="button"
-                  disabled={!input.trim() || isOptimizing || isLoading}
-                  onClick={handleOptimizePrompt}
-                  className={`h-9 w-9 rounded-full flex items-center justify-center transition-colors cursor-pointer border-none shadow-none bg-transparent ${isOptimizing ? 'text-gray-300 animate-pulse' : 'text-gray-400 hover:text-gray-900 hover:bg-gray-100'}`}
-                  title="Optimize Prompt (Flash Lite)"
+                  onClick={() => setIsMediaModalOpen(true)}
+                  className="absolute bottom-2.5 left-3 flex h-8 w-8 items-center justify-center rounded-full bg-[#f0f1f5] text-[#6b6f7e] transition-colors hover:bg-[#e4e6eb]"
+                  title="Attach"
                 >
-                  <AiEditingIcon className="w-5 h-5" />
+                  <PlusIcon className="h-4 w-4" strokeWidth={2.4} />
                 </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedModel('Agent Mode');
+                    setAiModel && setAiModel('Agent Mode');
+                  }}
+                  className="absolute bottom-2.5 left-[52px] flex h-8 items-center justify-center rounded-full bg-[#f0f1f5] px-4 text-[13px] font-medium text-[#6b6f7e] transition-colors hover:bg-[#e4e6eb]"
+                  title="Agent"
+                >
+                  Agent
+                </button>
+
                 <button
                   type="submit"
                   disabled={!input.trim() || isLoading}
-                  className="h-9 pl-4 pr-1.5 rounded-full bg-white text-black border border-gray-200 flex items-center justify-center gap-2 hover:bg-gray-50 hover:border-gray-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer font-medium text-sm focus:outline-none focus:ring-0 active:outline-none"
+                  className="absolute bottom-2.5 right-3 flex h-8 w-8 items-center justify-center rounded-full bg-[#38bdf8] text-white transition-transform hover:scale-105 hover:bg-[#0ea5e9] disabled:cursor-not-allowed disabled:opacity-50"
+                  title="Send"
                 >
-                  <span>Create</span>
-                  <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0">
-                    <ArrowUp className="w-[14px] h-[14px] text-white" strokeWidth={2.5} />
-                  </div>
+                  <ArrowUp className="h-[14px] w-[14px]" strokeWidth={2.6} />
                 </button>
               </div>
-            </div>
-            
-            <div className="px-4 py-2 flex items-center justify-center gap-1.5">
-              <div className="relative">
-                <button 
-                  type="button" 
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setOpenDropdown(openDropdown === 'model' ? null : 'model');
-                  }}
-                  className="flex items-center gap-1.5 text-white hover:bg-white/10 px-3 py-1.5 rounded-full transition-colors cursor-pointer text-sm font-medium"
-                >
-                  <span>{formatModelName(selectedModel)}</span>
-                  <ChevronDown className="w-4 h-4 text-white/70" />
-                </button>
-                {openDropdown === 'model' && (
-                  <div className="absolute left-0 bottom-full mb-2 z-[60] min-w-[200px] bg-[#1f1f1f] border border-white/10 rounded-[20px] p-2 flex flex-col gap-1 shadow-xl max-h-[148px] overflow-y-auto scrollbar-none">
-                    {MODELS.map(model => (
-                      <button
-                        key={model}
-                        type="button"
-                        onClick={() => {
-                          setSelectedModel(model);
-                          setAiModel && setAiModel(model);
-                          setOpenDropdown(null);
-                        }}
-                        className={`w-full flex items-center justify-between px-3 py-2.5 text-[14px] font-medium transition-colors hover:bg-white/10 focus:bg-white/10 focus:outline-none cursor-pointer rounded-xl ${selectedModel === model ? 'text-white bg-white/10' : 'text-gray-300'}`}
-                      >
-                        <div className="flex items-center gap-3">
-                          {formatModelName(model)}
-                        </div>
-                        <div className="w-3.5 flex justify-center">
-                          {selectedModel === model && <Check className="w-3.5 h-3.5 text-white" strokeWidth={2.5} />}
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-              
-              <button 
-                type="button" 
-                onClick={() => setIsMediaModalOpen(true)}
-                className="flex items-center justify-center w-8 h-8 text-white/80 hover:text-white hover:bg-white/10 rounded-full transition-colors cursor-pointer"
-                title="Media"
-              >
-                <Album02Icon className="w-[18px] h-[18px]" strokeWidth={2} />
-              </button>
-              
-              <div className="relative">
-                <button 
-                  type="button" 
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setOpenDropdown(openDropdown === 'skills' ? null : 'skills');
-                  }}
-                  className={`flex items-center justify-center w-8 h-8 rounded-full transition-colors cursor-pointer ${selectedSkills.length > 0 ? 'text-white bg-white/10' : 'text-white/80 hover:text-white hover:bg-white/10'}`}
-                  title="Skills"
-                >
-                  <NoteIcon className="w-[18px] h-[18px]" strokeWidth={2} />
-                </button>
-                {openDropdown === 'skills' && (
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 mt-3 z-[60] min-w-[220px] bg-[#1f1f1f] border border-white/10 rounded-[20px] p-2 flex flex-col gap-1 shadow-xl">
-                    {AVAILABLE_SKILLS.map((skill) => {
-                      const isSelected = selectedSkills.includes(skill.id);
-                      const Icon = skill.icon;
-                      return (
-                        <button
-                          key={skill.id}
-                          type="button"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            setSelectedSkills(prev => 
-                              prev.includes(skill.id) ? prev.filter(id => id !== skill.id) : [...prev, skill.id]
-                            );
-                          }}
-                          className={`w-full flex items-center justify-between px-3 py-2.5 text-[14px] font-medium transition-colors hover:bg-white/10 focus:bg-white/10 focus:outline-none cursor-pointer rounded-xl ${isSelected ? 'text-white bg-white/10' : 'text-gray-300'}`}
-                        >
-                          <div className="flex items-center gap-3">
-                            <Icon className="w-[18px] h-[18px] text-white/80" strokeWidth={2} />
-                            {skill.name}
-                          </div>
-                          {isSelected && <Check className="w-4 h-4 text-white" strokeWidth={2.5} />}
-                        </button>
-                      )
-                    })}
-                  </div>
-                )}
-              </div>
-
-              <div className="w-[1px] h-4 bg-white/20 mx-0.5"></div>
-
-              <button 
-                type="button"
-                className="flex items-center justify-center w-8 h-8 text-white/80 hover:text-white hover:bg-white/10 rounded-full transition-colors cursor-pointer"
-                title="Voice"
-              >
-                <VoiceIdIcon className="w-[18px] h-[18px]" strokeWidth={2} />
-              </button>
             </div>
           </form>
 
-          {/* Sub-panels: Categories and Suggested Prompts */}
-          <div className="w-full max-w-[700px] mt-8">
-            <div className="flex items-center justify-center gap-2 mb-6 overflow-x-auto pb-2 scrollbar-none">
+          <div className="w-full">
+            <div className="mb-3 flex items-center justify-between">
+              <span className="text-[18px] font-semibold text-[#1a1a2e]">Start with a prompt</span>
+              <div className="flex gap-2">
+                <button className="flex h-[34px] w-[34px] items-center justify-center rounded-full bg-white text-gray-500 ring-1 ring-[#e2e4e9] hover:bg-gray-50">
+                  <ChevronDown className="h-4 w-4 rotate-90" />
+                </button>
+                <button className="flex h-[34px] w-[34px] items-center justify-center rounded-full bg-white text-gray-500 ring-1 ring-[#e2e4e9] hover:bg-gray-50">
+                  <ChevronDown className="h-4 w-4 -rotate-90" />
+                </button>
+              </div>
+            </div>
+            <div className="mb-5 flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               {TABS.map((tab) => {
                 const Icon = tab.icon;
                 const isActive = activeTab === tab.id;
@@ -417,8 +327,8 @@ export default function HomeInterface({ onSendMessage, isLoading, savedMedia, se
                     onClick={() => setActiveTab(tab.id)}
                     className={`flex items-center gap-2 px-4 py-2 rounded-[20px] text-sm font-medium transition-colors whitespace-nowrap cursor-pointer ${
                       isActive 
-                        ? 'bg-white text-gray-900 shadow-xs' 
-                        : 'text-white/80 hover:bg-white/10 hover:text-white'
+                        ? 'bg-[#1a1a2e] text-white' 
+                        : 'bg-[#f0f1f4] text-[#4b4f61] hover:bg-[#e8eaef]'
                     }`}
                   >
                     <Icon className="w-4 h-4" />
@@ -441,10 +351,10 @@ export default function HomeInterface({ onSendMessage, isLoading, savedMedia, se
                       textareaRef.current.focus();
                     }
                   }}
-                  className="flex items-start gap-3.5 text-left w-full group py-1.5 px-2 rounded-xl hover:bg-white/5 transition-colors"
+                  className="group flex w-full items-start gap-3.5 rounded-xl px-2 py-1.5 text-left transition-colors hover:bg-[#f0f1f4]"
                 >
-                  <ArrowRight className="w-4 h-4 text-white/40 mt-1 group-hover:text-white transition-colors flex-shrink-0" />
-                  <span className="text-[14px] text-white/90 group-hover:text-white transition-colors font-medium">
+                  <ArrowRight className="mt-1 h-4 w-4 flex-shrink-0 text-[#b0b3be] transition-colors group-hover:text-[#1a1a2e]" />
+                  <span className="text-[14px] font-medium text-[#4b4f61] transition-colors group-hover:text-[#1a1a2e]">
                     {prompt}
                   </span>
                 </motion.button>

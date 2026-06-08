@@ -225,7 +225,7 @@ export default function Sidebar({ activeTab, onTabChange, savedVideos, onOpenVid
                   Nothing matches
                 </div>
               ) : (
-                <div className="flex flex-col gap-1">
+                <div className="flex max-h-[296px] flex-col gap-1 overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                   {filteredVideos.map((video) => (
                     <button
                       key={video.id}
