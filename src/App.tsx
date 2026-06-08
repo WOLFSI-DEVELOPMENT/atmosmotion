@@ -12,7 +12,6 @@ import HomeInterface from './components/HomeInterface';
 import Sidebar from './components/Sidebar';
 import AgentInterface from './components/AgentInterface';
 import MarketplaceInterface from './components/MarketplaceInterface';
-import ToolsInterface from './components/ToolsInterface';
 import VideoPreviewThumbnail from './components/VideoPreviewThumbnail';
 import CloudPromoModal from './components/CloudPromoModal';
 import { Message, RemotionData, ChatResponse, Source, SavedMedia, SavedVideo, VideoFolder } from './types';
@@ -28,7 +27,7 @@ export function MainApp() {
   const [appMode, setAppMode] = useState<'home' | 'editor' | 'agent'>('home');
   const [currentProjectId, setCurrentProjectId] = useState<string | null>(null);
   const [aiModel, setAiModel] = useState<string>('Agent');
-  const [activeTab, setActiveTab] = useState<'create' | 'super-atmos' | 'marketplace' | 'tools'>('create');
+  const [activeTab, setActiveTab] = useState<'create' | 'super-atmos' | 'marketplace'>('create');
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [dataHistory, setDataHistory] = useState<RemotionData[]>([]);
@@ -438,18 +437,6 @@ export function MainApp() {
                          // folder open handled inside MyVideosInterface logically
                       }}
                     />
-                  </motion.div>
-                )}
-                {activeTab === 'tools' && (
-                  <motion.div
-                    key="tools"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.2 }}
-                    className="w-full h-full"
-                  >
-                    <ToolsInterface savedMedia={savedMedia} setSavedMedia={setSavedMedia} />
                   </motion.div>
                 )}
                 {activeTab === 'agent' as any && (

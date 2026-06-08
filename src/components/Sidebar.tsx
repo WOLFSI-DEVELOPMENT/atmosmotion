@@ -1,12 +1,12 @@
 import React, { useMemo, useState } from 'react';
 import { DashboardCircleAddIcon, UserAdd01Icon, Bug02Icon, Cancel01Icon, UserCircleIcon, Store01Icon } from 'hugeicons-react';
-import { HelpCircle, Blocks, Search } from 'lucide-react';
+import { HelpCircle, Search } from 'lucide-react';
 import AccountSettingsModal from './AccountSettingsModal';
 import { SavedVideo } from '../types';
 
 interface SidebarProps {
-  activeTab: 'create' | 'super-atmos' | 'marketplace' | 'tools';
-  onTabChange: (tab: 'create' | 'super-atmos' | 'marketplace' | 'tools') => void;
+  activeTab: 'create' | 'super-atmos' | 'marketplace';
+  onTabChange: (tab: 'create' | 'super-atmos' | 'marketplace') => void;
   savedVideos: SavedVideo[];
   onOpenVideo: (video: SavedVideo) => void;
 }
@@ -138,18 +138,6 @@ export default function Sidebar({ activeTab, onTabChange, savedVideos, onOpenVid
           aria-label="Marketplace"
         >
           <Store01Icon className="w-5 h-5 flex-shrink-0" />
-        </button>
-
-        <div className="my-2" />
-
-        {/* Tools Tab */}
-        <button
-          onClick={() => onTabChange('tools')}
-          className={navButtonClass(activeTab === 'tools')}
-          title="Tools"
-          aria-label="Tools"
-        >
-          <Blocks className="w-5 h-5 flex-shrink-0" />
         </button>
       </div>
 

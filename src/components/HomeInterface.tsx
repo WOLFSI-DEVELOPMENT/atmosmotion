@@ -73,6 +73,17 @@ const PROMPT_CARDS = [
   },
 ];
 
+const CODE_BACKDROP = [
+  { text: 'spring({ damping: 18, stiffness: 120 })', className: 'left-[8%] top-[22%] rotate-[-8deg]' },
+  { text: 'interpolate(frame, [0, 48], [0, 1])', className: 'right-[7%] top-[19%] rotate-[7deg]' },
+  { text: 'translateY: easeOutCubic(progress) * -24', className: 'left-[12%] top-[58%] rotate-[5deg]' },
+  { text: 'opacity: sequence(0.0, 1.0, 0.92)', className: 'right-[10%] top-[56%] rotate-[-6deg]' },
+  { text: 'blur(12px) -> blur(0px)', className: 'left-[28%] top-[14%] rotate-[3deg]' },
+  { text: 'camera.zoom = 1 + progress * 0.08', className: 'right-[25%] top-[70%] rotate-[4deg]' },
+  { text: 'layer.enter({ y: 18, scale: 0.98 })', className: 'left-[34%] top-[76%] rotate-[-4deg]' },
+  { text: 'caption.reveal("Apple-style motion")', className: 'right-[33%] top-[12%] rotate-[-3deg]' },
+];
+
 const DISCOVER_TEMPLATES = [
   {
     id: 'kinetic-typography',
@@ -277,6 +288,16 @@ export default function HomeInterface({ onSendMessage, isLoading, savedMedia, se
     <div className="flex flex-col w-full h-full overflow-y-auto bg-white text-gray-900 font-sans scrollbar-none">
       {/* Hero Composer */}
       <div className="relative flex min-h-[520px] w-full items-center justify-center overflow-hidden bg-white px-6 pb-16 pt-24 md:min-h-[620px] md:pb-20 md:pt-32">
+        <div className="pointer-events-none absolute inset-0 overflow-hidden select-none">
+          {CODE_BACKDROP.map((line) => (
+            <span
+              key={line.text}
+              className={`absolute hidden whitespace-nowrap font-mono text-[11px] font-medium tracking-tight text-gray-300/65 md:block ${line.className}`}
+            >
+              {line.text}
+            </span>
+          ))}
+        </div>
         <div className="relative z-10 flex w-full max-w-[660px] flex-col items-center gap-5">
           <h2 className={`w-full text-center [font-family:Georgia,serif] text-4xl font-bold leading-tight tracking-tight text-[#0a0a0a] transition-transform duration-300 md:text-[40px] ${isAttachTrayOpen ? '-translate-y-4' : ''}`}>
             What do you want to create?

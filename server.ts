@@ -588,7 +588,11 @@ Structure required:
     let modelId = 'gemini-3.5-flash';
     let isOpenRouter = false;
     
-    if (modelName === 'Plan' || !modelName) modelId = 'gemini-3.5-flash';
+    if (modelName?.toLowerCase() === 'auto') {
+      modelId = 'openrouter/free';
+      isOpenRouter = true;
+    }
+    else if (modelName === 'Plan' || modelName === 'plan' || !modelName) modelId = 'gemini-3.5-flash';
     else if (modelName.toLowerCase().includes('3.1 flash lite')) modelId = 'gemini-3.1-flash-lite';
     else if (modelName.toLowerCase().includes('3.5')) modelId = 'gemini-3.5-flash';
     else if (modelName.toLowerCase().includes('3 flash preview')) modelId = 'gemini-3-flash-preview';
