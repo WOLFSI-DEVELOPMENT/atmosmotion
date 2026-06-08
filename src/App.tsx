@@ -5,7 +5,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Bot, ListChecks, PanelLeftClose, PanelLeftOpen, Sparkle } from 'lucide-react';
+import { Bot, ListChecks, Sparkle } from 'lucide-react';
 import ChatInterface from './components/ChatInterface';
 import PlayerPane from './components/PlayerPane';
 import StudioPane from './components/StudioPane';
@@ -20,7 +20,7 @@ import { Message, RemotionData, ChatResponse, Source, SavedMedia, SavedVideo, Vi
 import WaitlistPage from './components/auth/WaitlistPage';
 import EnterCodePage from './components/auth/EnterCodePage';
 import LoginPage from './components/auth/LoginPage';
-import { PlayIcon as Play, AiGenerativeIcon } from 'hugeicons-react';
+import { PlayIcon as Play, AiGenerativeIcon, SidebarLeft01Icon } from 'hugeicons-react';
 import PrivacyPage from './components/auth/PrivacyPage';
 import TermsPage from './components/auth/TermsPage';
 import SuperAtmosTrailer from './components/SuperAtmosTrailer';
@@ -28,11 +28,11 @@ import SuperAtmosTrailer from './components/SuperAtmosTrailer';
 export function MainApp() {
   const [appMode, setAppMode] = useState<'home' | 'editor' | 'agent'>('home');
   const [currentProjectId, setCurrentProjectId] = useState<string | null>(null);
-  const [aiModel, setAiModel] = useState<string>('Plan');
+  const [aiModel, setAiModel] = useState<string>('Agent');
   const [activeTab, setActiveTab] = useState<'create' | 'super-atmos' | 'marketplace' | 'tools'>('create');
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isModelMenuOpen, setIsModelMenuOpen] = useState(false);
-  const [hasPickedModel, setHasPickedModel] = useState(false);
+  const [hasPickedModel, setHasPickedModel] = useState(true);
   const [messages, setMessages] = useState<Message[]>([]);
   const [dataHistory, setDataHistory] = useState<RemotionData[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
@@ -42,7 +42,7 @@ export function MainApp() {
   const [isSearching, setIsSearching] = useState(false);
   const [sources, setSources] = useState<Source[]>([]);
 
-  const modelOptions = ['auto', 'Agent', 'plan', 'lite 3.1', 'flash 3.5', 'pro 3.1', 'kimi 2.6'];
+  const modelOptions = ['lite 3.1', 'flash 3.5', 'pro 3.1', 'kimi 2.6'];
   const modelTabs = ['auto', 'Agent', 'plan'];
   const isGeminiModel = (name: string) => ['lite 3.1', 'flash 3.5', 'pro 3.1'].includes(name);
 
@@ -394,9 +394,9 @@ export function MainApp() {
                   title={isSidebarCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
                 >
                   {isSidebarCollapsed ? (
-                    <PanelLeftOpen className="w-4 h-4 md:w-5 md:h-5" strokeWidth={2} />
+                    <SidebarLeft01Icon className="w-4 h-4 md:w-5 md:h-5" strokeWidth={2} />
                   ) : (
-                    <PanelLeftClose className="w-4 h-4 md:w-5 md:h-5" strokeWidth={2} />
+                    <SidebarLeft01Icon className="w-4 h-4 md:w-5 md:h-5" strokeWidth={2} />
                   )}
                 </button>
 
@@ -419,10 +419,11 @@ export function MainApp() {
                             key={model}
                             type="button"
                             onClick={() => chooseModel(model)}
-                            className={`flex h-7 flex-1 items-center justify-center rounded-full text-xs font-medium transition-colors ${
+                            className={`flex h-7 flex-1 items-center justify-center gap-1.5 rounded-full text-xs font-medium transition-colors ${
                               aiModel === model ? 'bg-white text-black' : 'bg-transparent text-gray-500 hover:text-gray-900'
                             }`}
                           >
+                            {renderModelIcon(model)}
                             {model.toLowerCase()}
                           </button>
                         ))}

@@ -22,35 +22,56 @@ const AVAILABLE_SKILLS = [
   { id: 'multi_scene', name: 'Multi-Scene', icon: Layers },
 ];
 
-const TABS = [
-  { id: 'logo', label: 'Logo Reveal', icon: Aperture },
-  { id: 'title', label: 'Title Sequence', icon: Type },
-  { id: 'data', label: 'Data Viz', icon: BarChart2 },
-  { id: 'social', label: 'Social Media', icon: Layout },
+const PROMPT_CARDS = [
+  {
+    title: 'Music Video',
+    image: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?auto=format&fit=crop&w=420&q=80',
+    prompt: 'Create a moody music video scene with fast cuts, spotlight haze, and bold lyric typography.',
+    rotate: '-rotate-6',
+  },
+  {
+    title: 'Ad Video',
+    image: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=420&q=80',
+    prompt: 'Create a polished product ad with macro beauty shots, clean captions, and smooth camera moves.',
+    rotate: 'rotate-3',
+  },
+  {
+    title: 'Movie',
+    image: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=420&q=80',
+    prompt: 'Build a cinematic movie trailer opener with dramatic atmosphere and sweeping title reveals.',
+    rotate: '-rotate-2',
+  },
+  {
+    title: 'Shorts',
+    image: 'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=420&q=80',
+    prompt: 'Make a vertical shorts edit with quick scene changes, punchy captions, and creator-style pacing.',
+    rotate: 'rotate-2',
+  },
+  {
+    title: 'Music',
+    image: 'https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&w=420&q=80',
+    prompt: 'Create an animated album promo with waveform motion, soft light leaks, and track title cards.',
+    rotate: '-rotate-3',
+  },
+  {
+    title: 'E-Commerce',
+    image: 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&w=420&q=80',
+    prompt: 'Generate an e-commerce product showcase with floating items, price callouts, and clean transitions.',
+    rotate: 'rotate-1',
+  },
+  {
+    title: 'Social',
+    image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=420&q=80',
+    prompt: 'Design a social media promo with stacked screens, bold headlines, and scroll-stopping motion.',
+    rotate: '-rotate-2',
+  },
+  {
+    title: 'Branding',
+    image: 'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=420&q=80',
+    prompt: 'Create a branding reveal with logo cards, palette swatches, and refined type animation.',
+    rotate: 'rotate-4',
+  },
 ];
-
-const SUGGESTED_PROMPTS: Record<string, string[]> = {
-  logo: [
-    "Create a clean, minimal logo reveal with smooth easing and a slight bounce",
-    "Generate a 3D rotating logo centered on a dark gradient background",
-    "Design a dynamic logo intro with quick scaling and a glowing effect"
-  ],
-  title: [
-    "A cinematic title sequence with slow-moving text and deep shadows",
-    "Build a kinetic typography sequence with bold, fast-paced text animations",
-    "Produce an elegant title card with subtle fade-ins and thin serif fonts"
-  ],
-  data: [
-    "An animated bar chart growing smoothly showing weekly growth statistics",
-    "A pie chart that spins and reveals its segments one by one with labels",
-    "A simple animated line graph with a glowing trail effect on a dark background"
-  ],
-  social: [
-    "A vertical 9:16 Instagram reel intro with bold text and emojis",
-    "An eye-catching YouTube subscribe animation with a bell icon",
-    "A minimal lower thirds graphic for an interview video"
-  ]
-};
 
 const DISCOVER_TEMPLATES = [
   {
@@ -120,7 +141,6 @@ const DISCOVER_TEMPLATES = [
 
 export default function HomeInterface({ onSendMessage, isLoading, savedMedia, setSavedMedia, savedVideos, aiModel, setAiModel, onOpenVideo }: Props) {
   const [input, setInput] = useState('');
-  const [activeTab, setActiveTab] = useState('logo');
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
   
   const [isMediaModalOpen, setIsMediaModalOpen] = useState(false);
@@ -205,8 +225,6 @@ export default function HomeInterface({ onSendMessage, isLoading, savedMedia, se
     }, 15);
   };
 
-  const currentPrompts = SUGGESTED_PROMPTS[activeTab] || [];
-  
   const selectedMediaObjs = savedMedia.filter(m => selectedMediaIds.includes(m.id));
 
   return (
@@ -334,59 +352,22 @@ export default function HomeInterface({ onSendMessage, isLoading, savedMedia, se
             </div>
           </form>
 
-          <div className="w-full">
-            <div className="mb-3 flex items-center justify-between">
-              <span className="text-[18px] font-semibold text-[#1a1a2e]">Start with a prompt</span>
-              <div className="flex gap-2">
-                <button className="flex h-[34px] w-[34px] items-center justify-center rounded-full bg-white text-gray-500 ring-1 ring-[#e2e4e9] hover:bg-gray-50">
-                  <ChevronDown className="h-4 w-4 rotate-90" />
-                </button>
-                <button className="flex h-[34px] w-[34px] items-center justify-center rounded-full bg-white text-gray-500 ring-1 ring-[#e2e4e9] hover:bg-gray-50">
-                  <ChevronDown className="h-4 w-4 -rotate-90" />
-                </button>
-              </div>
-            </div>
-            <div className="mb-5 flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-              {TABS.map((tab) => {
-                const Icon = tab.icon;
-                const isActive = activeTab === tab.id;
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-[20px] text-sm font-medium transition-colors whitespace-nowrap cursor-pointer ${
-                      isActive 
-                        ? 'bg-[#1a1a2e] text-white' 
-                        : 'bg-[#f0f1f4] text-[#4b4f61] hover:bg-[#e8eaef]'
-                    }`}
-                  >
-                    <Icon className="w-4 h-4" />
-                    <span>{tab.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-
-            <div className="space-y-3">
-              {currentPrompts.map((prompt, index) => (
-                <motion.button
-                  key={index}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: index * 0.05 }}
-                  onClick={() => {
-                    setInput(prompt);
-                    if (textareaRef.current) {
-                      textareaRef.current.focus();
-                    }
-                  }}
-                  className="group flex w-full items-start gap-3.5 rounded-xl px-2 py-1.5 text-left transition-colors hover:bg-[#f0f1f4]"
+          <div className="w-screen max-w-[1180px]">
+            <h3 className="mb-8 text-center text-[26px] font-bold tracking-tight text-[#171717]">Add Skills for a Better Start</h3>
+            <div className="flex snap-x snap-mandatory gap-4 overflow-x-auto px-7 pb-8 pt-3 scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              {PROMPT_CARDS.map((card, index) => (
+                <button
+                  key={card.title}
+                  type="button"
+                  onClick={() => handleTryPrompt(card.prompt)}
+                  className={`group relative flex h-[190px] min-w-[148px] snap-center flex-col overflow-hidden rounded-[24px] bg-white p-2 transition duration-300 ease-out hover:-translate-y-2 hover:rotate-0 ${card.rotate}`}
+                  style={{ boxShadow: '0 14px 34px rgba(15, 23, 42, 0.14)' }}
                 >
-                  <ArrowRight className="mt-1 h-4 w-4 flex-shrink-0 text-[#b0b3be] transition-colors group-hover:text-[#1a1a2e]" />
-                  <span className="text-[14px] font-medium text-[#4b4f61] transition-colors group-hover:text-[#1a1a2e]">
-                    {prompt}
-                  </span>
-                </motion.button>
+                  <div className="relative h-[132px] overflow-hidden rounded-[18px] bg-gray-100">
+                    <img src={card.image} alt={card.title} className="h-full w-full object-cover transition duration-500 group-hover:scale-110" />
+                  </div>
+                  <span className="mt-2 truncate text-center text-[16px] font-bold text-[#202020]">{card.title}</span>
+                </button>
               ))}
             </div>
           </div>
