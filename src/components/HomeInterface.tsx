@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { motion } from 'motion/react';
-import { ArrowUp, Bot, Camera, FileText, Image as ImageLucide, Layers2, ListChecks, Plus as PlusIcon, Sparkle } from 'lucide-react';
+import { ArrowUp, Camera, FileText, Image as ImageLucide, Layers2, Plus as PlusIcon } from 'lucide-react';
 import { PlusSignIcon as Plus, ArrowDown01Icon as ChevronDown, LayersLogoIcon as Aperture, TextFontIcon as Type, Chart03Icon as BarChart2, CarouselHorizontal02Icon as Layout, ArrowMoveDownRightIcon as ArrowRight, GridIcon as Blocks, Clock01Icon as Clock, ComputerIcon as Monitor, SparklesIcon as Sparkles, DropletIcon as Droplet, PaintBoardIcon as Palette, Layers01Icon as Layers, Tick01Icon as Check, AtIcon as AtSign, Image01Icon as ImageIcon, Cancel01Icon as X, PlayIcon as Play, AttachmentIcon, File01Icon, File02Icon, Folder01Icon, AiEditingIcon, Album02Icon, NoteIcon, VoiceIdIcon } from 'hugeicons-react';
 import { SavedMedia, SavedVideo } from '../types';
 import MediaModal from './MediaModal';
@@ -121,7 +121,6 @@ const DISCOVER_TEMPLATES = [
 export default function HomeInterface({ onSendMessage, isLoading, savedMedia, setSavedMedia, savedVideos, aiModel, setAiModel, onOpenVideo }: Props) {
   const [input, setInput] = useState('');
   const [activeTab, setActiveTab] = useState('logo');
-  const [openDropdown, setOpenDropdown] = useState<'skills' | 'model' | null>(null);
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
   
   const [isMediaModalOpen, setIsMediaModalOpen] = useState(false);
@@ -133,7 +132,6 @@ export default function HomeInterface({ onSendMessage, isLoading, savedMedia, se
   
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const MODELS = ['auto', 'Agent', 'plan', 'lite 3.1', 'flash 3.5', 'pro 3.1', 'kimi 2.6'];
   const AGENT_MODES = ['Agent', 'Plan', 'Create'];
 
   const handleAgentModeCycle = () => {
@@ -143,66 +141,6 @@ export default function HomeInterface({ onSendMessage, isLoading, savedMedia, se
     const modelName = nextMode === 'Create' ? 'auto' : nextMode;
     setSelectedModel(modelName);
     setAiModel && setAiModel(modelName);
-  };
-
-  const formatModelName = (name: string) => {
-    switch (name) {
-      case 'auto':
-        return 'auto';
-      case 'Agent':
-        return 'Agent';
-      case 'plan':
-        return 'plan';
-      case 'lite 3.1':
-        return 'lite 3.1';
-      case 'flash 3.5':
-        return 'flash 3.5';
-      case 'pro 3.1':
-        return 'pro 3.1';
-      case 'kimi 2.6':
-        return 'kimi 2.6';
-      default:
-        return name;
-    }
-  };
-
-  const isGeminiModel = (name: string) => ['lite 3.1', 'flash 3.5', 'pro 3.1'].includes(name);
-
-  const renderModelIcon = (name: string) => {
-    if (isGeminiModel(name)) {
-      return (
-        <svg viewBox="0 0 512 512" className="h-4 w-4 fill-current text-black" aria-hidden="true">
-          <path d="M32.582 370.734C15.127 336.291 5.12 297.425 5.12 256c0-41.426 10.007-80.291 27.462-114.735C74.705 57.484 161.047 0 261.12 0c69.12 0 126.836 25.367 171.287 66.793l-73.31 73.309c-26.763-25.135-60.276-38.168-97.977-38.168-66.56 0-123.113 44.917-143.36 105.426-5.12 15.36-8.146 31.65-8.146 48.64 0 16.989 3.026 33.28 8.146 48.64l-.303.232h.303c20.247 60.51 76.8 105.426 143.36 105.426 34.443 0 63.534-9.31 86.341-24.67 27.23-18.152 45.382-45.148 51.433-77.032H261.12v-99.142h241.105c3.025 16.757 4.654 34.211 4.654 52.364 0 77.963-27.927 143.592-76.334 188.276-42.356 39.098-100.305 61.905-169.425 61.905-100.073 0-186.415-57.483-228.538-141.032v-.233z" />
-        </svg>
-      );
-    }
-
-    if (name === 'kimi 2.6') {
-      return (
-        <svg viewBox="0 0 512 512" className="h-4 w-4" aria-hidden="true">
-          <path d="M503 114.333v280c0 60.711-49.29 110-110 110H113c-60.711 0-110-49.289-110-110v-280c0-60.71 49.289-110 110-110h280c60.71 0 110 49.29 110 110z" />
-          <path d="M342.065 189.759c1.886-2.42 3.541-4.63 5.289-6.77.81-1.007.74-1.771-.046-2.824-7.58-9.965-8.298-21.028-3.935-32.254 3.275-8.448 10.52-12.406 19.373-13.25 5.52-.521 10.936.046 15.959 2.73 6.596 3.53 10.438 8.912 11.688 16.341.995 5.926.81 11.712-.868 17.452-2.974 10.161-10.277 15.427-20.287 16.758-8.31 1.11-16.734 1.25-25.113 1.817-.648.046-1.308 0-2.06 0z" fill="#027aff" />
-          <path d="M321.512 144.254h-50.064l-39.637 90.384h-56.036v-89.99H131v232.868h44.787v-98.103h78.973c13.598 0 26.015-7.927 31.744-20.252v118.355h44.787v-98.103c0-23.342-18.239-42.97-41.523-44.671v-.116h-24.593a45.577 45.577 0 0026.884-24.534l29.453-65.838z" fill="#fff" />
-        </svg>
-      );
-    }
-
-    if (name === 'Agent') return <Bot className="h-4 w-4 text-black" strokeWidth={2} />;
-    if (name === 'plan') return <ListChecks className="h-4 w-4 text-black" strokeWidth={2} />;
-    return <Sparkle className="h-4 w-4 text-black" strokeWidth={2} />;
-  };
-
-  const renderModelLabel = (name: string) => {
-    if (isGeminiModel(name)) {
-      const version = name.replace(/^(lite|flash|pro)\s/i, '');
-      return (
-        <span>
-          <span className="text-black">gemini</span>
-          <span className="text-gray-400"> {version}</span>
-        </span>
-      );
-    }
-    return <span>{formatModelName(name)}</span>;
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -275,47 +213,6 @@ export default function HomeInterface({ onSendMessage, isLoading, savedMedia, se
     <div className="flex flex-col w-full h-full overflow-y-auto bg-white text-gray-900 font-sans scrollbar-none">
       {/* Hero Composer */}
       <div className="relative flex min-h-[520px] w-full items-center justify-center overflow-hidden bg-white px-6 pb-16 pt-24 md:min-h-[620px] md:pb-20 md:pt-32">
-        <div className="absolute left-8 top-6 z-20 w-[300px]">
-          <div className="relative">
-            <button
-              type="button"
-              onClick={() => setOpenDropdown(openDropdown === 'model' ? null : 'model')}
-              className="flex w-full items-center border-b border-[#e2e4e9] bg-transparent px-2 py-3 text-[14.5px] font-medium text-[#1a1a2e]"
-            >
-              <span className="flex-1 text-left text-gray-600">Model</span>
-              <span className="flex items-center gap-2 text-black">
-                {renderModelIcon(selectedModel)}
-                {renderModelLabel(selectedModel)}
-              </span>
-              <span className="ml-3 flex h-5 w-9 items-center rounded-full bg-[#171717] p-0.5">
-                <span className="h-4 w-4 rounded-full bg-white" />
-              </span>
-            </button>
-            {openDropdown === 'model' && (
-              <div className="absolute right-0 top-full z-[60] mt-2 flex min-w-[180px] flex-col gap-0.5 rounded-[14px] border border-[#e2e4e9] bg-white p-1.5 shadow-[0_8px_24px_rgba(0,0,0,0.06)]">
-                {MODELS.map(model => (
-                  <button
-                    key={model}
-                    type="button"
-                    onClick={() => {
-                      setSelectedModel(model);
-                      setAiModel && setAiModel(model);
-                      setOpenDropdown(null);
-                    }}
-                    className="flex w-full items-center justify-between rounded-[10px] px-3.5 py-2.5 text-left text-sm transition-colors hover:bg-[#f0f1f5]"
-                  >
-                    <span className="flex items-center gap-2 font-medium text-black">
-                      {renderModelIcon(model)}
-                      {renderModelLabel(model)}
-                    </span>
-                    {selectedModel === model && <Check className="h-3.5 w-3.5 text-[#6b6f7e]" strokeWidth={2.4} />}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-
         <div className="relative z-10 flex w-full max-w-[660px] flex-col items-center gap-5">
           <h2 className={`w-full text-center [font-family:Georgia,serif] text-4xl font-bold leading-tight tracking-tight text-[#0a0a0a] transition-transform duration-300 md:text-[40px] ${isAttachTrayOpen ? '-translate-y-4' : ''}`}>
             What do you want to create?

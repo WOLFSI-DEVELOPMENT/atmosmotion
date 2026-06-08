@@ -5,7 +5,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { PanelLeftClose, PanelLeftOpen } from 'lucide-react';
+import { Bot, ListChecks, PanelLeftClose, PanelLeftOpen, Sparkle } from 'lucide-react';
 import ChatInterface from './components/ChatInterface';
 import PlayerPane from './components/PlayerPane';
 import StudioPane from './components/StudioPane';
@@ -31,6 +31,8 @@ export function MainApp() {
   const [aiModel, setAiModel] = useState<string>('Plan');
   const [activeTab, setActiveTab] = useState<'create' | 'super-atmos' | 'marketplace' | 'tools'>('create');
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isModelMenuOpen, setIsModelMenuOpen] = useState(false);
+  const [hasPickedModel, setHasPickedModel] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [dataHistory, setDataHistory] = useState<RemotionData[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
@@ -39,6 +41,50 @@ export function MainApp() {
 
   const [isSearching, setIsSearching] = useState(false);
   const [sources, setSources] = useState<Source[]>([]);
+
+  const modelOptions = ['auto', 'Agent', 'plan', 'lite 3.1', 'flash 3.5', 'pro 3.1', 'kimi 2.6'];
+  const modelTabs = ['auto', 'Agent', 'plan'];
+  const isGeminiModel = (name: string) => ['lite 3.1', 'flash 3.5', 'pro 3.1'].includes(name);
+
+  const renderModelIcon = (name: string) => {
+    if (isGeminiModel(name)) {
+      return (
+        <svg viewBox="0 0 512 512" className="h-4 w-4 fill-current text-black" aria-hidden="true">
+          <path d="M32.582 370.734C15.127 336.291 5.12 297.425 5.12 256c0-41.426 10.007-80.291 27.462-114.735C74.705 57.484 161.047 0 261.12 0c69.12 0 126.836 25.367 171.287 66.793l-73.31 73.309c-26.763-25.135-60.276-38.168-97.977-38.168-66.56 0-123.113 44.917-143.36 105.426-5.12 15.36-8.146 31.65-8.146 48.64 0 16.989 3.026 33.28 8.146 48.64l-.303.232h.303c20.247 60.51 76.8 105.426 143.36 105.426 34.443 0 63.534-9.31 86.341-24.67 27.23-18.152 45.382-45.148 51.433-77.032H261.12v-99.142h241.105c3.025 16.757 4.654 34.211 4.654 52.364 0 77.963-27.927 143.592-76.334 188.276-42.356 39.098-100.305 61.905-169.425 61.905-100.073 0-186.415-57.483-228.538-141.032v-.233z" />
+        </svg>
+      );
+    }
+    if (name === 'kimi 2.6') {
+      return (
+        <svg viewBox="0 0 512 512" className="h-4 w-4" aria-hidden="true">
+          <path d="M503 114.333v280c0 60.711-49.29 110-110 110H113c-60.711 0-110-49.289-110-110v-280c0-60.71 49.289-110 110-110h280c60.71 0 110 49.29 110 110z" />
+          <path d="M342.065 189.759c1.886-2.42 3.541-4.63 5.289-6.77.81-1.007.74-1.771-.046-2.824-7.58-9.965-8.298-21.028-3.935-32.254 3.275-8.448 10.52-12.406 19.373-13.25 5.52-.521 10.936.046 15.959 2.73 6.596 3.53 10.438 8.912 11.688 16.341.995 5.926.81 11.712-.868 17.452-2.974 10.161-10.277 15.427-20.287 16.758-8.31 1.11-16.734 1.25-25.113 1.817-.648.046-1.308 0-2.06 0z" fill="#027aff" />
+          <path d="M321.512 144.254h-50.064l-39.637 90.384h-56.036v-89.99H131v232.868h44.787v-98.103h78.973c13.598 0 26.015-7.927 31.744-20.252v118.355h44.787v-98.103c0-23.342-18.239-42.97-41.523-44.671v-.116h-24.593a45.577 45.577 0 0026.884-24.534l29.453-65.838z" fill="#fff" />
+        </svg>
+      );
+    }
+    if (name === 'Agent') return <Bot className="h-4 w-4 text-black" strokeWidth={2} />;
+    if (name === 'plan') return <ListChecks className="h-4 w-4 text-black" strokeWidth={2} />;
+    return <Sparkle className="h-4 w-4 text-black" strokeWidth={2} />;
+  };
+
+  const renderModelLabel = (name: string) => {
+    if (isGeminiModel(name)) {
+      return (
+        <span>
+          <span className="text-black">gemini</span>
+          <span className="text-gray-400"> {name.replace(/^(lite|flash|pro)\s/i, '')}</span>
+        </span>
+      );
+    }
+    return <span>{name}</span>;
+  };
+
+  const chooseModel = (model: string) => {
+    setAiModel(model);
+    setHasPickedModel(true);
+    setIsModelMenuOpen(false);
+  };
   
   const [savedMedia, setSavedMedia] = useState<SavedMedia[]>(() => {
     try {
@@ -340,19 +386,67 @@ export function MainApp() {
           </motion.div>
           <div className="flex-1 flex transition-all duration-300">
             <div className="flex-1 bg-white flex items-center justify-center overflow-hidden w-full h-full relative">
-              {/* Universal Collapse Sidebar Floating Button */}
-              <button
-                onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-                id="collapse-sidebar-btn"
-                className="absolute top-4 left-4 z-50 w-9 h-9 md:w-10 md:h-10 rounded-full bg-gray-100/90 hover:bg-gray-200/95 text-gray-600 hover:text-gray-900 border border-gray-200/50 backdrop-blur-xs flex items-center justify-center transition-all shadow-xs active:scale-95 cursor-pointer"
-                title={isSidebarCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
-              >
-                {isSidebarCollapsed ? (
-                  <PanelLeftOpen className="w-4 h-4 md:w-5 md:h-5" strokeWidth={2} />
-                ) : (
-                  <PanelLeftClose className="w-4 h-4 md:w-5 md:h-5" strokeWidth={2} />
-                )}
-              </button>
+              <div className="absolute left-4 top-4 z-50 flex items-start gap-3">
+                <button
+                  onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+                  id="collapse-sidebar-btn"
+                  className="flex h-9 w-9 items-center justify-center rounded-full bg-transparent text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900 active:scale-95 md:h-10 md:w-10"
+                  title={isSidebarCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+                >
+                  {isSidebarCollapsed ? (
+                    <PanelLeftOpen className="w-4 h-4 md:w-5 md:h-5" strokeWidth={2} />
+                  ) : (
+                    <PanelLeftClose className="w-4 h-4 md:w-5 md:h-5" strokeWidth={2} />
+                  )}
+                </button>
+
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() => setIsModelMenuOpen(prev => !prev)}
+                    className="flex h-10 min-w-[132px] items-center gap-2 border-b border-gray-200 bg-transparent px-1 text-[14px] font-medium text-gray-700"
+                  >
+                    {hasPickedModel && renderModelIcon(aiModel)}
+                    <span>{hasPickedModel ? renderModelLabel(aiModel) : 'Model'}</span>
+                  </button>
+
+                  {isModelMenuOpen && (
+                    <div className="absolute left-0 top-full mt-2 w-[232px] rounded-[18px] bg-white p-2">
+                      <div className="mb-2 flex w-full rounded-full bg-gray-100 p-1">
+                        {modelTabs.map(model => (
+                          <button
+                            key={model}
+                            type="button"
+                            onClick={() => chooseModel(model)}
+                            className={`flex h-7 flex-1 items-center justify-center rounded-full text-xs font-medium transition-colors ${
+                              aiModel === model ? 'bg-white text-black' : 'bg-transparent text-gray-500 hover:text-gray-900'
+                            }`}
+                          >
+                            {model.toLowerCase()}
+                          </button>
+                        ))}
+                      </div>
+
+                      <div className="flex flex-col gap-1">
+                        {modelOptions.map(model => (
+                          <button
+                            key={model}
+                            type="button"
+                            onClick={() => chooseModel(model)}
+                            className="flex w-full items-center justify-between rounded-[12px] px-3 py-2.5 text-left text-sm font-medium transition-colors hover:bg-gray-100"
+                          >
+                            <span className="flex items-center gap-2">
+                              {renderModelIcon(model)}
+                              {renderModelLabel(model)}
+                            </span>
+                            {aiModel === model && <ListChecks className="h-3.5 w-3.5 text-gray-500" strokeWidth={2.2} />}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
 
               <AnimatePresence mode="wait">
                 {activeTab === 'create' && (
