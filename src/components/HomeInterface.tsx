@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { motion } from 'motion/react';
-import { ArrowUp, Plus as PlusIcon } from 'lucide-react';
+import { ArrowUp, Camera, FileText, Image as ImageLucide, Layers2, Plus as PlusIcon, Star } from 'lucide-react';
 import { PlusSignIcon as Plus, ArrowDown01Icon as ChevronDown, LayersLogoIcon as Aperture, TextFontIcon as Type, Chart03Icon as BarChart2, CarouselHorizontal02Icon as Layout, ArrowMoveDownRightIcon as ArrowRight, GridIcon as Blocks, Clock01Icon as Clock, ComputerIcon as Monitor, SparklesIcon as Sparkles, DropletIcon as Droplet, PaintBoardIcon as Palette, Layers01Icon as Layers, Tick01Icon as Check, AtIcon as AtSign, Image01Icon as ImageIcon, Cancel01Icon as X, PlayIcon as Play, AttachmentIcon, File01Icon, File02Icon, Folder01Icon, AiEditingIcon, Album02Icon, NoteIcon, VoiceIdIcon } from 'hugeicons-react';
 import { SavedMedia, SavedVideo } from '../types';
 import MediaModal from './MediaModal';
@@ -128,10 +128,22 @@ export default function HomeInterface({ onSendMessage, isLoading, savedMedia, se
   const [selectedMediaIds, setSelectedMediaIds] = useState<string[]>([]);
   const [selectedModel, setSelectedModel] = useState<string>(aiModel || 'Plan');
   const [isOptimizing, setIsOptimizing] = useState(false);
+  const [isAttachTrayOpen, setIsAttachTrayOpen] = useState(false);
+  const [agentModeIndex, setAgentModeIndex] = useState(0);
   
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const MODELS = ['Agent Mode', 'Plan', 'Gemini 3.5 Flash', 'Gemini 3 Flash Preview', 'Gemini 3.1 Flash Lite', 'Gemma-4-31b-it', 'Kimi 2.6'];
+  const AGENT_MODES = ['Agent', 'Plan', 'Create'];
+
+  const handleAgentModeCycle = () => {
+    const nextIndex = (agentModeIndex + 1) % AGENT_MODES.length;
+    setAgentModeIndex(nextIndex);
+    const nextMode = AGENT_MODES[nextIndex];
+    const modelName = nextMode === 'Agent' ? 'Agent Mode' : nextMode;
+    setSelectedModel(modelName);
+    setAiModel && setAiModel(modelName);
+  };
 
   const formatModelName = (name: string) => {
     switch (name) {
@@ -225,12 +237,80 @@ export default function HomeInterface({ onSendMessage, isLoading, savedMedia, se
     <div className="flex flex-col w-full h-full overflow-y-auto bg-white text-gray-900 font-sans scrollbar-none">
       {/* Hero Composer */}
       <div className="relative flex min-h-[520px] w-full items-center justify-center overflow-hidden bg-white px-6 pb-16 pt-24 md:min-h-[620px] md:pb-20 md:pt-32">
+        <div className="absolute right-8 top-8 z-20">
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setOpenDropdown(openDropdown === 'model' ? null : 'model')}
+              className="flex items-center gap-2 bg-transparent p-2 text-[14.5px] font-medium text-[#1a1a2e] transition-opacity hover:opacity-60"
+            >
+              <Star className="h-4 w-4" strokeWidth={2.2} />
+              <span>{formatModelName(selectedModel === 'Agent Mode' ? 'Agent Mode' : selectedModel)}</span>
+              <ChevronDown className="h-4 w-4" strokeWidth={2.2} />
+            </button>
+            {openDropdown === 'model' && (
+              <div className="absolute right-0 top-full z-[60] mt-2 flex min-w-[180px] flex-col gap-0.5 rounded-[14px] border border-[#e2e4e9] bg-white p-1.5 shadow-[0_8px_24px_rgba(0,0,0,0.06)]">
+                {MODELS.map(model => (
+                  <button
+                    key={model}
+                    type="button"
+                    onClick={() => {
+                      setSelectedModel(model);
+                      setAiModel && setAiModel(model);
+                      setOpenDropdown(null);
+                    }}
+                    className="flex w-full items-center justify-between rounded-[10px] px-3.5 py-2.5 text-left text-sm transition-colors hover:bg-[#f0f1f5]"
+                  >
+                    <span className="font-medium text-black">{formatModelName(model)}</span>
+                    {selectedModel === model && <Check className="h-3.5 w-3.5 text-[#6b6f7e]" strokeWidth={2.4} />}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
         <div className="relative z-10 flex w-full max-w-[660px] flex-col items-center gap-5">
-          <h2 className="w-full text-center [font-family:Georgia,serif] text-4xl font-bold leading-tight tracking-tight text-[#0a0a0a] md:text-[40px]">
+          <h2 className={`w-full text-center [font-family:Georgia,serif] text-4xl font-bold leading-tight tracking-tight text-[#0a0a0a] transition-transform duration-300 md:text-[40px] ${isAttachTrayOpen ? '-translate-y-4' : ''}`}>
             What do you want to create?
           </h2>
 
           <form onSubmit={handleSubmit} className="relative w-full">
+            <div
+              className={`absolute bottom-full left-0 right-0 z-0 mb-[-20px] overflow-hidden rounded-t-[40px] bg-white px-3 transition-all duration-300 ${
+                isAttachTrayOpen
+                  ? 'max-h-[160px] border border-b-0 border-[#e2e4e9] pb-0 pt-3.5 opacity-100'
+                  : 'max-h-0 py-0 opacity-0'
+              }`}
+              style={{ cornerShape: 'superellipse(2.5)' } as React.CSSProperties}
+            >
+              <div className="flex gap-2.5">
+                {[
+                  { label: 'Image', icon: ImageLucide, action: () => setIsMediaModalOpen(true) },
+                  { label: 'File', icon: FileText, action: () => setIsMediaModalOpen(true) },
+                  { label: 'Logo', icon: Layers2, action: () => setIsMediaModalOpen(true) },
+                  { label: 'Screenshot', icon: Camera, action: () => setIsMediaModalOpen(true) },
+                ].map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <button
+                      key={item.label}
+                      type="button"
+                      onClick={item.action}
+                      className="flex h-[82px] flex-1 flex-col items-center justify-center gap-1.5 rounded-[40px] bg-[#f3f4f7] text-[11.5px] font-medium tracking-[0.01em] text-[#50546a] transition hover:-translate-y-px hover:bg-[#eaebef] active:scale-[0.97]"
+                      style={{ cornerShape: 'superellipse(2.5)' } as React.CSSProperties}
+                    >
+                      <Icon className="h-[22px] w-[22px]" strokeWidth={1.6} />
+                      {item.label}
+                    </button>
+                  );
+                })}
+              </div>
+              <svg className="mt-3 block h-[22px] w-full overflow-visible" viewBox="0 0 600 22" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0,18 Q20,4 60,4 L540,4 Q580,4 600,18" fill="none" stroke="#e2e4e9" strokeWidth="1.5" />
+              </svg>
+            </div>
+
             <div className="relative overflow-hidden rounded-[40px] bg-white ring-1 ring-[#e2e4e9] transition-shadow focus-within:ring-[#c8cdd8] focus-within:shadow-[0_2px_16px_rgba(0,0,0,0.06)]" style={{ cornerShape: 'superellipse(2.5)' } as React.CSSProperties}>
               {selectedMediaObjs.length > 0 && (
                 <div className="flex flex-wrap gap-2 px-5 pt-4">
@@ -266,7 +346,7 @@ export default function HomeInterface({ onSendMessage, isLoading, savedMedia, se
                   }
                 }}
                 placeholder="Ask me anything..."
-                className="block min-h-[64px] max-h-[200px] w-full resize-none overflow-y-auto bg-transparent px-[56px] pb-2 pt-5 text-[15px] leading-relaxed text-[#1a1a2e] outline-none placeholder:text-[#b0b3be]"
+                className="block min-h-[64px] max-h-[200px] w-full resize-none overflow-y-auto bg-transparent pl-[72px] pr-[56px] pb-2 pt-5 text-[15px] leading-relaxed text-[#1a1a2e] outline-none placeholder:text-[#b0b3be]"
                 disabled={isLoading}
                 rows={1}
               />
@@ -274,8 +354,10 @@ export default function HomeInterface({ onSendMessage, isLoading, savedMedia, se
               <div className="relative h-[50px]">
                 <button
                   type="button"
-                  onClick={() => setIsMediaModalOpen(true)}
-                  className="absolute bottom-2.5 left-3 flex h-8 w-8 items-center justify-center rounded-full bg-[#f0f1f5] text-[#6b6f7e] transition-colors hover:bg-[#e4e6eb]"
+                  onClick={() => setIsAttachTrayOpen(prev => !prev)}
+                  className={`absolute bottom-2.5 left-3 flex h-8 w-8 items-center justify-center rounded-full transition-all hover:bg-[#e4e6eb] ${
+                    isAttachTrayOpen ? 'rotate-45 bg-[#1a1a2e] text-white hover:bg-[#2d2d44]' : 'bg-[#f0f1f5] text-[#6b6f7e]'
+                  }`}
                   title="Attach"
                 >
                   <PlusIcon className="h-4 w-4" strokeWidth={2.4} />
@@ -283,14 +365,15 @@ export default function HomeInterface({ onSendMessage, isLoading, savedMedia, se
 
                 <button
                   type="button"
-                  onClick={() => {
-                    setSelectedModel('Agent Mode');
-                    setAiModel && setAiModel('Agent Mode');
-                  }}
-                  className="absolute bottom-2.5 left-[52px] flex h-8 items-center justify-center rounded-full bg-[#f0f1f5] px-4 text-[13px] font-medium text-[#6b6f7e] transition-colors hover:bg-[#e4e6eb]"
-                  title="Agent"
+                  onClick={handleAgentModeCycle}
+                  className="absolute bottom-2.5 left-[52px] flex h-8 min-w-[68px] items-start justify-center overflow-hidden rounded-full bg-[#f0f1f5] px-4 text-[13px] font-medium text-[#6b6f7e] transition-colors hover:bg-[#e4e6eb] active:scale-95"
+                  title="Change Mode"
                 >
-                  Agent
+                  <div className="flex flex-col transition-transform duration-300" style={{ transform: `translateY(-${agentModeIndex * 32}px)` }}>
+                    {AGENT_MODES.map((mode) => (
+                      <span key={mode} className="block h-8 leading-8">{mode}</span>
+                    ))}
+                  </div>
                 </button>
 
                 <button
