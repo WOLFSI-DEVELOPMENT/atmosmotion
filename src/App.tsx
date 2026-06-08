@@ -314,13 +314,13 @@ export function MainApp() {
           <motion.div
             initial={false}
             animate={{ 
-              width: isSidebarCollapsed ? 0 : 240,
+              width: isSidebarCollapsed ? 0 : 72,
               opacity: isSidebarCollapsed ? 0 : 1
             }}
             transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
             className="h-full overflow-hidden flex-shrink-0"
           >
-            <div className="w-[240px] h-full">
+            <div className="w-[72px] h-full">
               <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
             </div>
           </motion.div>

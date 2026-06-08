@@ -22,6 +22,13 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
   const [isFaqOpen, setIsFaqOpen] = useState(false);
   const [isAccountOpen, setIsAccountOpen] = useState(false);
 
+  const navButtonClass = (isActive = false) =>
+    `h-10 w-14 rounded-full flex items-center justify-center transition-colors ${
+      isActive
+        ? 'bg-gray-900 text-white'
+        : 'bg-transparent text-gray-500 hover:bg-gray-100 hover:text-gray-900'
+    }`;
+
   const fetchInvites = async () => {
     try {
       const email = localStorage.getItem('userEmail');
@@ -83,51 +90,41 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
   };
 
   return (
-    <div className="w-[240px] h-screen bg-white flex-shrink-0 flex flex-col px-4 py-6 relative">
+    <div className="w-[72px] h-screen bg-white flex-shrink-0 flex flex-col items-center px-2 py-5 relative">
       {/* App Title & Icon */}
-      <div className="flex items-center gap-3 px-2 mb-8">
-        <img src="https://res.cloudinary.com/dwthgcx5j/image/upload/v1780066101/ChatGPT_Image_May_29_2026_07_42_50_AM_1_tptgxp.png" alt="Atmos design" className="w-[42px] h-[42px] object-contain flex-shrink-0" />
-        <span className="font-bold text-gray-900 text-xl tracking-tight">Atmos design</span>
+      <div className="flex items-center justify-center mb-8">
+        <img src="https://res.cloudinary.com/dwthgcx5j/image/upload/v1780066101/ChatGPT_Image_May_29_2026_07_42_50_AM_1_tptgxp.png" alt="Atmos design" className="w-9 h-9 object-contain flex-shrink-0" />
       </div>
 
-      <div className="flex flex-col gap-2 flex-grow">
+      <div className="flex flex-col items-center gap-2 flex-grow">
         {/* Create Tab / Button */}
         <button
           onClick={() => onTabChange('create')}
-          className={`w-full rounded-full flex items-center px-4 py-2 transition-colors ${
-            activeTab === 'create' 
-            ? 'bg-black text-white' 
-            : 'bg-transparent text-gray-600 hover:bg-[#e5e5e5] hover:text-gray-900'
-          }`}
+          className={navButtonClass(activeTab === 'create')}
+          title="Create"
+          aria-label="Create"
         >
-          <DashboardCircleAddIcon className="w-[18px] h-[18px] mr-2.5 flex-shrink-0" strokeWidth={activeTab === 'create' ? 2 : 1.5} />
-          <span className="font-medium text-sm">Create</span>
+          <DashboardCircleAddIcon className="w-5 h-5 flex-shrink-0" strokeWidth={activeTab === 'create' ? 2 : 1.5} />
         </button>
 
         {/* Super Atmos Tab */}
         <button
           onClick={() => onTabChange('super-atmos')}
-          className={`w-full rounded-full flex items-center px-4 py-2 transition-colors ${
-            activeTab === 'super-atmos' 
-            ? 'bg-[#e5e5e5] text-gray-900' 
-            : 'bg-transparent text-gray-600 hover:bg-[#e5e5e5] hover:text-gray-900'
-          }`}
+          className={navButtonClass(activeTab === 'super-atmos')}
+          title="Super Atmos"
+          aria-label="Super Atmos"
         >
-          <AiGenerativeIcon className="w-[18px] h-[18px] mr-2.5 flex-shrink-0" strokeWidth={activeTab === 'super-atmos' ? 2 : 1.5} />
-          <span className="font-medium text-sm">Super Atmos</span>
+          <AiGenerativeIcon className="w-5 h-5 flex-shrink-0" strokeWidth={activeTab === 'super-atmos' ? 2 : 1.5} />
         </button>
 
         {/* Marketplace Tab */}
         <button
           onClick={() => onTabChange('marketplace')}
-          className={`w-full rounded-full flex items-center px-4 py-2 transition-colors ${
-            activeTab === 'marketplace' 
-            ? 'bg-[#e5e5e5] text-gray-900' 
-            : 'bg-transparent text-gray-600 hover:bg-[#e5e5e5] hover:text-gray-900'
-          }`}
+          className={navButtonClass(activeTab === 'marketplace')}
+          title="Marketplace"
+          aria-label="Marketplace"
         >
-          <Store01Icon className="w-[18px] h-[18px] mr-2.5 flex-shrink-0" />
-          <span className="font-medium text-sm">Marketplace</span>
+          <Store01Icon className="w-5 h-5 flex-shrink-0" />
         </button>
 
         <div className="my-2" />
@@ -135,49 +132,50 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
         {/* Tools Tab */}
         <button
           onClick={() => onTabChange('tools')}
-          className={`w-full rounded-full flex items-center px-4 py-2 transition-colors ${
-            activeTab === 'tools' 
-            ? 'bg-[#e5e5e5] text-gray-900' 
-            : 'bg-transparent text-gray-600 hover:bg-[#e5e5e5] hover:text-gray-900'
-          }`}
+          className={navButtonClass(activeTab === 'tools')}
+          title="Tools"
+          aria-label="Tools"
         >
-          <Blocks className="w-[18px] h-[18px] mr-2.5 flex-shrink-0" />
-          <span className="font-medium text-sm">Tools</span>
+          <Blocks className="w-5 h-5 flex-shrink-0" />
         </button>
       </div>
 
       {/* Bottom Actions */}
-      <div className="flex flex-col gap-2 pt-4 mt-auto">
+      <div className="flex flex-col items-center gap-2 pt-4 mt-auto">
         <button
           onClick={openInviteModal}
-          className="w-full rounded-full flex items-center px-4 py-2 transition-colors bg-transparent text-gray-600 hover:bg-[#e5e5e5] hover:text-gray-900 cursor-pointer"
+          className={navButtonClass()}
+          title="Invite Friends"
+          aria-label="Invite Friends"
         >
-          <UserAdd01Icon className="w-[18px] h-[18px] mr-2.5 flex-shrink-0" />
-          <span className="font-medium text-sm">Invite Friends</span>
+          <UserAdd01Icon className="w-5 h-5 flex-shrink-0" />
         </button>
 
         <button
           onClick={() => setIsFeedbackOpen(true)}
-          className="w-full rounded-full flex items-center px-4 py-2 transition-colors bg-transparent text-gray-600 hover:bg-[#e5e5e5] hover:text-gray-900"
+          className={navButtonClass()}
+          title="Suggest / Report"
+          aria-label="Suggest or report"
         >
-          <Bug02Icon className="w-[18px] h-[18px] mr-2.5 flex-shrink-0" />
-          <span className="font-medium text-sm">Suggest / Report</span>
+          <Bug02Icon className="w-5 h-5 flex-shrink-0" />
         </button>
 
         <button
           onClick={() => setIsFaqOpen(true)}
-          className="w-full rounded-full flex items-center px-4 py-2 transition-colors bg-transparent text-gray-600 hover:bg-[#e5e5e5] hover:text-gray-900"
+          className={navButtonClass()}
+          title="FAQ"
+          aria-label="FAQ"
         >
-          <HelpCircle className="w-[18px] h-[18px] mr-2.5 flex-shrink-0" />
-          <span className="font-medium text-sm">FAQ</span>
+          <HelpCircle className="w-5 h-5 flex-shrink-0" />
         </button>
 
         <button
           onClick={() => setIsAccountOpen(true)}
-          className="w-full rounded-full flex items-center px-4 py-2 transition-colors bg-transparent text-gray-600 hover:bg-[#e5e5e5] hover:text-gray-900 mt-2"
+          className={`${navButtonClass()} mt-2`}
+          title="Account"
+          aria-label="Account"
         >
-          <UserCircleIcon className="w-[18px] h-[18px] mr-2.5 flex-shrink-0" />
-          <span className="font-medium text-sm">Account</span>
+          <UserCircleIcon className="w-5 h-5 flex-shrink-0" />
         </button>
       </div>
 
