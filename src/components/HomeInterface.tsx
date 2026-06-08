@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { motion } from 'motion/react';
-import { ArrowUp, Camera, Clock3, FileText, Image as ImageLucide, Layers2, Plus as PlusIcon, Ratio, WandSparkles } from 'lucide-react';
-import { PlusSignIcon as Plus, ArrowDown01Icon as ChevronDown, LayersLogoIcon as Aperture, TextFontIcon as Type, Chart03Icon as BarChart2, CarouselHorizontal02Icon as Layout, ArrowMoveDownRightIcon as ArrowRight, GridIcon as Blocks, Clock01Icon as Clock, ComputerIcon as Monitor, SparklesIcon as Sparkles, DropletIcon as Droplet, PaintBoardIcon as Palette, Layers01Icon as Layers, Tick01Icon as Check, AtIcon as AtSign, Image01Icon as ImageIcon, Cancel01Icon as X, PlayIcon as Play, AttachmentIcon, File01Icon, File02Icon, Folder01Icon, AiEditingIcon, Album02Icon, NoteIcon, VoiceIdIcon } from 'hugeicons-react';
+import { ArrowUp, Bot, Camera, Clock3, FileText, Image as ImageLucide, Layers2, ListChecks, Plus as PlusIcon, Ratio, WandSparkles } from 'lucide-react';
+import { PlusSignIcon as Plus, ArrowDown01Icon as ChevronDown, LayersLogoIcon as Aperture, TextFontIcon as Type, Chart03Icon as BarChart2, CarouselHorizontal02Icon as Layout, ArrowMoveDownRightIcon as ArrowRight, GridIcon as Blocks, Clock01Icon as Clock, ComputerIcon as Monitor, SparklesIcon as Sparkles, DropletIcon as Droplet, PaintBoardIcon as Palette, Layers01Icon as Layers, Tick01Icon as Check, AtIcon as AtSign, Image01Icon as ImageIcon, Cancel01Icon as X, PlayIcon as Play, AttachmentIcon, File01Icon, File02Icon, Folder01Icon, AiEditingIcon, Album02Icon, NoteIcon, VoiceIdIcon, Atom02Icon } from 'hugeicons-react';
 import { SavedMedia, SavedVideo } from '../types';
 import MediaModal from './MediaModal';
 
@@ -146,6 +146,7 @@ export default function HomeInterface({ onSendMessage, isLoading, savedMedia, se
   const [isMediaModalOpen, setIsMediaModalOpen] = useState(false);
   const [selectedMediaIds, setSelectedMediaIds] = useState<string[]>([]);
   const [selectedModel, setSelectedModel] = useState<string>(aiModel || 'Agent');
+  const [isModelMenuOpen, setIsModelMenuOpen] = useState(false);
   const [isOptimizing, setIsOptimizing] = useState(false);
   const [isAttachTrayOpen, setIsAttachTrayOpen] = useState(false);
   const [agentModeIndex, setAgentModeIndex] = useState(0);
@@ -153,6 +154,49 @@ export default function HomeInterface({ onSendMessage, isLoading, savedMedia, se
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const AGENT_MODES = ['Agent', 'Plan', 'Create'];
+  const modelOptions = ['lite 3.1', 'flash 3.5', 'pro 3.1', 'kimi 2.6'];
+  const modelTabs = ['auto', 'Agent', 'plan'];
+  const isGeminiModel = (name: string) => ['lite 3.1', 'flash 3.5', 'pro 3.1'].includes(name);
+
+  const renderModelIcon = (name: string) => {
+    if (isGeminiModel(name)) {
+      return (
+        <svg viewBox="0 0 512 512" className="h-3.5 w-3.5 fill-current text-black" aria-hidden="true">
+          <path d="M32.582 370.734C15.127 336.291 5.12 297.425 5.12 256c0-41.426 10.007-80.291 27.462-114.735C74.705 57.484 161.047 0 261.12 0c69.12 0 126.836 25.367 171.287 66.793l-73.31 73.309c-26.763-25.135-60.276-38.168-97.977-38.168-66.56 0-123.113 44.917-143.36 105.426-5.12 15.36-8.146 31.65-8.146 48.64 0 16.989 3.026 33.28 8.146 48.64l-.303.232h.303c20.247 60.51 76.8 105.426 143.36 105.426 34.443 0 63.534-9.31 86.341-24.67 27.23-18.152 45.382-45.148 51.433-77.032H261.12v-99.142h241.105c3.025 16.757 4.654 34.211 4.654 52.364 0 77.963-27.927 143.592-76.334 188.276-42.356 39.098-100.305 61.905-169.425 61.905-100.073 0-186.415-57.483-228.538-141.032v-.233z" />
+        </svg>
+      );
+    }
+    if (name === 'kimi 2.6') {
+      return (
+        <svg viewBox="0 0 512 512" className="h-3.5 w-3.5" aria-hidden="true">
+          <path d="M503 114.333v280c0 60.711-49.29 110-110 110H113c-60.711 0-110-49.289-110-110v-280c0-60.71 49.289-110 110-110h280c60.71 0 110 49.29 110 110z" />
+          <path d="M342.065 189.759c1.886-2.42 3.541-4.63 5.289-6.77.81-1.007.74-1.771-.046-2.824-7.58-9.965-8.298-21.028-3.935-32.254 3.275-8.448 10.52-12.406 19.373-13.25 5.52-.521 10.936.046 15.959 2.73 6.596 3.53 10.438 8.912 11.688 16.341.995 5.926.81 11.712-.868 17.452-2.974 10.161-10.277 15.427-20.287 16.758-8.31 1.11-16.734 1.25-25.113 1.817-.648.046-1.308 0-2.06 0z" fill="#027aff" />
+          <path d="M321.512 144.254h-50.064l-39.637 90.384h-56.036v-89.99H131v232.868h44.787v-98.103h78.973c13.598 0 26.015-7.927 31.744-20.252v118.355h44.787v-98.103c0-23.342-18.239-42.97-41.523-44.671v-.116h-24.593a45.577 45.577 0 0026.884-24.534l29.453-65.838z" fill="#fff" />
+        </svg>
+      );
+    }
+    if (name === 'Agent') return <Bot className="h-3.5 w-3.5 text-black" strokeWidth={2} />;
+    if (name === 'plan') return <ListChecks className="h-3.5 w-3.5 text-black" strokeWidth={2} />;
+    return <Atom02Icon className="h-3.5 w-3.5 text-black" strokeWidth={2} />;
+  };
+
+  const renderModelLabel = (name: string) => {
+    if (isGeminiModel(name)) {
+      return (
+        <span>
+          <span className="text-black">gemini</span>
+          <span className="text-gray-400"> {name.replace(/^(lite|flash|pro)\s/i, '')}</span>
+        </span>
+      );
+    }
+    return <span>{name}</span>;
+  };
+
+  const chooseModel = (model: string) => {
+    setSelectedModel(model);
+    setAiModel && setAiModel(model);
+    setIsModelMenuOpen(false);
+  };
 
   const handleAgentModeCycle = () => {
     const nextIndex = (agentModeIndex + 1) % AGENT_MODES.length;
@@ -312,7 +356,7 @@ export default function HomeInterface({ onSendMessage, isLoading, savedMedia, se
                   }
                 }}
                 placeholder="Ask me anything..."
-                className="block min-h-[64px] max-h-[200px] w-full resize-none overflow-y-auto bg-transparent pl-[72px] pr-[56px] pb-2 pt-5 text-[15px] leading-relaxed text-[#1a1a2e] outline-none placeholder:text-[#b0b3be]"
+                className="block min-h-[64px] max-h-[200px] w-full resize-none overflow-y-auto bg-transparent pl-[104px] pr-[132px] pb-2 pt-5 text-[15px] leading-relaxed text-[#1a1a2e] outline-none placeholder:text-[#b0b3be]"
                 disabled={isLoading}
                 rows={1}
               />
@@ -342,6 +386,55 @@ export default function HomeInterface({ onSendMessage, isLoading, savedMedia, se
                   </div>
                 </button>
 
+                <div className="absolute bottom-2.5 right-[52px] z-20">
+                  <button
+                    type="button"
+                    onClick={() => setIsModelMenuOpen(prev => !prev)}
+                    className="flex h-8 max-w-[112px] items-center gap-1.5 rounded-full bg-[#f0f1f5] px-3 text-[12px] font-medium text-[#50546a] transition-colors hover:bg-[#e4e6eb]"
+                    style={{ cornerShape: 'superellipse(2)' } as React.CSSProperties}
+                  >
+                    {renderModelIcon(selectedModel)}
+                    <span className="truncate">{renderModelLabel(selectedModel)}</span>
+                  </button>
+
+                  {isModelMenuOpen && (
+                    <div className="absolute bottom-full right-0 mb-2 w-[232px] rounded-[18px] border border-gray-200 bg-white p-2">
+                      <div className="mb-2 flex w-full rounded-full bg-gray-100 p-1">
+                        {modelTabs.map(model => (
+                          <button
+                            key={model}
+                            type="button"
+                            onClick={() => chooseModel(model)}
+                            className={`flex h-7 flex-1 items-center justify-center gap-1.5 rounded-full text-xs font-medium transition-colors ${
+                              selectedModel === model ? 'bg-white text-black' : 'bg-transparent text-gray-500 hover:text-gray-900'
+                            }`}
+                          >
+                            {renderModelIcon(model)}
+                            {model.toLowerCase()}
+                          </button>
+                        ))}
+                      </div>
+
+                      <div className="flex flex-col gap-1">
+                        {modelOptions.map(model => (
+                          <button
+                            key={model}
+                            type="button"
+                            onClick={() => chooseModel(model)}
+                            className="flex w-full items-center justify-between rounded-[12px] px-3 py-2.5 text-left text-sm font-medium transition-colors hover:bg-gray-100"
+                          >
+                            <span className="flex items-center gap-2">
+                              {renderModelIcon(model)}
+                              {renderModelLabel(model)}
+                            </span>
+                            {selectedModel === model && <ListChecks className="h-3.5 w-3.5 text-gray-500" strokeWidth={2.2} />}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
                 <button
                   type="submit"
                   disabled={!input.trim() || isLoading}
@@ -362,8 +455,7 @@ export default function HomeInterface({ onSendMessage, isLoading, savedMedia, se
                   key={card.title}
                   type="button"
                   onClick={() => handleTryPrompt(card.prompt)}
-                  className={`group relative flex h-[190px] min-w-[148px] snap-center flex-col overflow-hidden rounded-[24px] bg-white p-2 transition duration-300 ease-out hover:-translate-y-2 hover:rotate-0 ${card.rotate}`}
-                  style={{ boxShadow: '0 14px 34px rgba(15, 23, 42, 0.14)' }}
+                  className={`group relative flex h-[190px] min-w-[148px] snap-center flex-col overflow-hidden rounded-[24px] border border-gray-200 bg-white p-2 transition duration-300 ease-out hover:-translate-y-2 hover:rotate-0 hover:border-gray-300 ${card.rotate}`}
                 >
                   <div className="relative h-[132px] overflow-hidden rounded-[18px] bg-gray-100">
                     <img src={card.image} alt={card.title} className="h-full w-full object-cover transition duration-500 group-hover:scale-110" />
