@@ -10,10 +10,9 @@ interface AgentInterfaceProps {
   initialPrompt: string;
   messages: Message[];
   setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
-  onPlayVideo?: (data: { code: string, durationInFrames: number, fps: number, compositionWidth: number, compositionHeight: number, prompt: string }) => void;
 }
 
-export default function AgentInterface({ initialPrompt, messages, setMessages, onPlayVideo }: AgentInterfaceProps) {
+export default function AgentInterface({ initialPrompt, messages, setMessages }: AgentInterfaceProps) {
   const [input, setInput] = useState('');
   const [stage, setStage] = useState<'planning' | 'waiting_approval' | 'generating' | 'waiting_render' | 'rendering' | 'done'>('planning');
   const [streamedText, setStreamedText] = useState('');
@@ -429,7 +428,6 @@ export default function AgentInterface({ initialPrompt, messages, setMessages, o
                        <div className="text-white text-sm">Rendering compiled video...</div>
                     ) : (
                        <div className="absolute inset-0 bg-gray-900 flex flex-col items-center justify-center relative">
-                          <PlayCircle02Icon onClick={() => { if (onPlayVideo && generatedData?.code) onPlayVideo(generatedData); }} className="w-16 h-16 text-white/50 cursor-pointer hover:text-white transition-colors" />
                           <div className="absolute bottom-4 right-4">
                              <button
                                onClick={handleExport}
